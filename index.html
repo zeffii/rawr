@@ -1,0 +1,76 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Rawr by zeffii</title>
+
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <h1>Rawr</h1>
+        <p>no</p>
+
+        <p class="view"><a href="https://github.com/zeffii/rawr">View the Project on GitHub <small>zeffii/rawr</small></a></p>
+
+
+        <ul>
+          <li><a href="https://github.com/zeffii/rawr/zipball/master">Download <strong>ZIP File</strong></a></li>
+          <li><a href="https://github.com/zeffii/rawr/tarball/master">Download <strong>TAR Ball</strong></a></li>
+          <li><a href="https://github.com/zeffii/rawr">View On <strong>GitHub</strong></a></li>
+        </ul>
+      </header>
+      <section>
+        <h1>Blender</h1>
+
+<p>The Blender directory contains several full addons and part scripts.</p>
+
+<ul>
+<li>Mesh Editing</li>
+<li>Tile Rendering (Monster Tile Renderer)</li>
+<li>Text Editor addons</li>
+</ul><p>The difference between an addon and a script is mostly the addition of boilerplate code to make the addon show up in the addon loader in user-preferences.</p>
+
+<blockquote>
+<p>"The scripts and addons presented here are mostly written out of the need to have
+some kind of automation turn into a one click event. If you use any software relentlessly
+you will want to avoid the scenario that turns you into a complex input machine rather than
+a creative user of the software. Scripting is the answer."</p>
+</blockquote>
+
+<p>I've written a tonne of Blender scripts but this repo focusses only on those that i frequently return to to steal code from, or <em>actually</em> use a lot.  </p>
+
+<h2>Installing Addons is easy.</h2>
+
+<p>To install an Addon properly:</p>
+
+<ol>
+<li>Inside <code>blender/../scripts/</code> plonk the content of addons_contrib</li>
+<li>In <code>User Preferences -&gt; addons -&gt; all</code> look for the addon name and tick it</li>
+<li>You don't need to install addons permanently, it's probably a good idea not to</li>
+<li>If you find yourself using an addon a lot, then certainly configure blender to include it permanently</li>
+<li>Permanent installation I do using <code>ctrl+U</code> after enabling an addon right from a default start.blend file.</li>
+<li>There are other ways, so use those if you are more comfortable</li>
+</ol><h2>Running non Addon scripts</h2>
+
+<p>One way to run scripts that aren't equipped with the addon boilerplate is to simply open them in the text editor and press <code>ctrl+p</code> or the run button.
+There is some convenience to this method: you can save the script with the .blend and the script will travel with it. The downside is that the script
+does travel with the .blend and can be a source of confusion to a recipient. Generally a short description of the script at the very top using docstring 
+style quotes will ease the blocking points.</p>
+      </section>
+      <footer>
+        <p>This project is maintained by <a href="https://github.com/zeffii">zeffii</a></p>
+        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
+      </footer>
+    </div>
+    <script src="javascripts/scale.fix.js"></script>
+    
+  </body>
+</html>
