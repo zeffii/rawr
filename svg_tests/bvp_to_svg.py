@@ -3,26 +3,16 @@ from bpy_extras.view3d_utils import location_3d_to_region_2d as loc3d2d
 
 import os
 
+output_filename = 'new_output2.svg'
 
-def write_svg(edge_list, region):
 
-    width, height =  region.width, region.height
 
-    print(os.getcwd())
-    file_to_write = open('new_output.svg', 'w')
-
-    base_string = """\
+header_string = """\
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<svg width="%s" height="%s">""" % (width, height)
+<svg width="%(width)s" height="%(height)s">"""
 
-    file_to_write.write(base_string)
 
-    for idx, edge in enumerate(edge_list):
-        path_name="path"+str(idx)
-        co1, co2 = edge
-   
-    
-        details = """
+path_data = """\
    <path style="    fill:none;
                     stroke:#000000;
                     stroke-width:3;
@@ -31,22 +21,45 @@ def write_svg(edge_list, region):
                     stroke-opacity:1;
                     stroke-miterlimit:4;
                     stroke-dasharray:none"
-         d="M %s,%s %s,%s"
-         id="%s"/>""" % (   co1.x, height-co1.y, 
-                            co2.x, height-co2.y, 
-                            path_name)
+         d="M %(x1)s,%(y1)s %(x2)s,%(y2)s"
+         id="%(path_name)s"/>"""
 
-        file_to_write.write(details)
 
-    end_file = """</svg>"""
-    file_to_write.write(end_file)
-    
+def printWarning(input):
+    print("\033[31m%s\033[0m" % input) 
+
+
+def write_svg(edge_list, region):
+    width, height =  region.width, region.height
+
+    file_to_write = open(output_filename, 'w')
+    file_to_write.write(header_string  % vars())
+
+    for idx, edge in enumerate(edge_list):
+        co1, co2 = edge
+   
+        x1 = co1.x
+        y1 = height - co1.y
+        x2 = co2.x
+        y2 = height - co2.y
+        path_name="path"+str(idx)
+        
+        file_to_write.write(path_data %  vars())
+
+    file_to_write.write("""</svg>""")
     file_to_write.close()
 
+    file_location = os.path.join(os.getcwd(), output_filename)
+    printWarning('wrote: ' + file_location)
 
 
 
-def draw_data(self, context):
+
+def generate_2d_draw_data(self, context):
+    """
+    this gets vertex coordinates, converts local to global
+    generates edge_list with 2d screen coordinates.
+    """
 
     region = context.region  
     rv3d = context.space_data.region_3d  
@@ -55,19 +68,55 @@ def draw_data(self, context):
 
     edge_list = []
     for edge in obj.data.edges:
-        idx1, idx2 = edge.vertices[:]
-        co1, co2 = vertlist[idx1].co, vertlist[idx2].co
-        co2d_1 = loc3d2d(region, rv3d, co1)
-        co2d_2 = loc3d2d(region, rv3d, co2)        
-        edge_list.append((co2d_1, co2d_2))
+        local_coords = [vertlist[idx].co for idx in edge.vertices]
+        world_coords = [obj.matrix_world * point for point in local_coords]    
+        edge_as_2d = [loc3d2d(region, rv3d, point) for point in world_coords]
+        edge_list.append(edge_as_2d)
     
     write_svg(edge_list, region)
     return
 
 
 
-
-
+def select_front_facing(self, context):
+    """
+    When deciding if a polygon is facing the camera, you need 
+    only calculate the dot product of the normal vector of     
+    that polygon, with a vector from the camera to one of the 
+    polygon's vertices. 
+    
+    - If the dot product is less than zero, the polygon is facing the camera. 
+    - If the value is greater than zero, it is facing away from the camera.
+    """
+    construction = False
+    
+    region = context.region  
+    rv3d = context.space_data.region_3d  
+    obj = context.active_object
+    vertlist = obj.data.vertices
+    
+    eye_location = rv3d.view_location
+    # [ ] be in object mode
+    # [ ] unselect everything first
+    
+    for polygon in obj.data.polygons:
+        pnormal = polygon.normal
+        vert_index = polygon.vertices[0]
+        world_coordinate = obj.matrix_world * vertlist[vert_index].co
+        
+        eye_location = rv3d.view_location
+        
+        if construction:
+            print(  "pnormal %(pnormal)s,\n"
+                    "vet_coordinate %(world_coordinate)s,\n"
+                    "cam_loc %(eye_location)s" % vars())
+            
+        result_vector = eye_location-world_coordinate
+        dot_value = pnormal.dot(result_vector)            
+        if dot_value <= 0.0:
+            polygon.select = True
+     
+    return
 
 
 class RenderButton(bpy.types.Operator):
@@ -79,7 +128,8 @@ class RenderButton(bpy.types.Operator):
     def execute(self, context):
         obname = context.active_object.name
         print('rendering %s' % obname)
-        draw_data(self, context)
+        generate_2d_draw_data(self, context)
+        # select_front_facing(self, context)
         return{'FINISHED'}  
 
 
