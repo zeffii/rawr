@@ -2,6 +2,7 @@ import bpy
 from bpy_extras.view3d_utils import location_3d_to_region_2d as loc3d2d
 
 import os
+from mathutils import Vector
 
 output_filename = 'new_output2.svg'
 
@@ -29,7 +30,8 @@ def printWarning(input):
     print("\033[31m%s\033[0m" % input) 
 
 
-def write_svg(edge_list, region):
+def write_svg(data):
+    edge_list, region = data
     width, height =  region.width, region.height
 
     file_to_write = open(output_filename, 'w')
@@ -51,7 +53,7 @@ def write_svg(edge_list, region):
 
     file_location = os.path.join(os.getcwd(), output_filename)
     printWarning('wrote: ' + file_location)
-
+    return
 
 
 
@@ -72,9 +74,8 @@ def generate_2d_draw_data(self, context):
         world_coords = [obj.matrix_world * point for point in local_coords]    
         edge_as_2d = [loc3d2d(region, rv3d, point) for point in world_coords]
         edge_list.append(edge_as_2d)
-    
-    write_svg(edge_list, region)
-    return
+
+    return edge_list, region
 
 
 
@@ -94,18 +95,20 @@ def select_front_facing(self, context):
     rv3d = context.space_data.region_3d  
     obj = context.active_object
     vertlist = obj.data.vertices
-    
-    eye_location = rv3d.view_location
+
     # [ ] be in object mode
     # [ ] unselect everything first
     
+    # neat eye location code with the help of paleajed
+    eye = Vector(rv3d.view_matrix[2][:3])
+    eye.length = rv3d.view_distance
+    eye_location = rv3d.view_location + eye  
+
     for polygon in obj.data.polygons:
         pnormal = polygon.normal
         vert_index = polygon.vertices[0]
         world_coordinate = obj.matrix_world * vertlist[vert_index].co
-        
-        eye_location = rv3d.view_location
-        
+                
         if construction:
             print(  "pnormal %(pnormal)s,\n"
                     "vet_coordinate %(world_coordinate)s,\n"
@@ -113,8 +116,9 @@ def select_front_facing(self, context):
             
         result_vector = eye_location-world_coordinate
         dot_value = pnormal.dot(result_vector)            
-        if dot_value <= 0.0:
+        if dot_value > 0.0:
             polygon.select = True
+    
      
     return
 
@@ -128,7 +132,9 @@ class RenderButton(bpy.types.Operator):
     def execute(self, context):
         obname = context.active_object.name
         print('rendering %s' % obname)
-        generate_2d_draw_data(self, context)
+
+        data = generate_2d_draw_data(self, context)
+        write_svg(data)
         # select_front_facing(self, context)
         return{'FINISHED'}  
 
