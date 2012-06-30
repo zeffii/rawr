@@ -10,20 +10,30 @@ output_filename = 'new_output2.svg'
 
 header_string = """\
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<svg width="%(width)s" height="%(height)s">"""
+<svg width="%(width)s" height="%(height)s"
+    xmlns="http://www.w3.org/2000/svg" version="1.1">
+    <desc>some description here</desc>
+"""
 
 
 path_data = """\
-   <path style="    fill:none;
-                    stroke:#000000;
-                    stroke-width:3;
-                    stroke-linecap:butt;
-                    stroke-linejoin:miter;
-                    stroke-opacity:1;
-                    stroke-miterlimit:4;
-                    stroke-dasharray:none"
-         d="M %(x1)s,%(y1)s %(x2)s,%(y2)s"
-         id="%(path_name)s"/>"""
+       <path d="M %(x1)s,%(y1)s %(x2)s,%(y2)s"
+             id="%(path_name)s"/>"""
+    
+
+group_style_info = """\
+    <g style ="    fill:none;
+                   stroke:#000000;
+                   stroke-width:3;
+                   stroke-linecap:butt;
+                   stroke-linejoin:miter;
+                   stroke-opacity:1;
+                   stroke-miterlimit:4;
+                   stroke-dasharray:none">"""
+
+
+end_group_style_info = """\
+    </g>"""
 
 
 def printWarning(input):
@@ -36,6 +46,7 @@ def write_svg(data):
 
     file_to_write = open(output_filename, 'w')
     file_to_write.write(header_string  % vars())
+    file_to_write.write(group_style_info)
 
     for idx, edge in enumerate(edge_list):
         co1, co2 = edge
@@ -48,6 +59,7 @@ def write_svg(data):
         
         file_to_write.write(path_data %  vars())
 
+    file_to_write.write(end_group_style_info)
     file_to_write.write("""</svg>""")
     file_to_write.close()
 
