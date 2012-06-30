@@ -57,7 +57,7 @@ def write_svg(data):
 
 
 
-def generate_2d_draw_data(self, context):
+def generate_2d_draw_data(context):
     """
     this gets vertex coordinates, converts local to global
     generates edge_list with 2d screen coordinates.
@@ -79,7 +79,7 @@ def generate_2d_draw_data(self, context):
 
 
 
-def select_front_facing(self, context):
+def select_front_facing(context):
     """
     When deciding if a polygon is facing the camera, you need 
     only calculate the dot product of the normal vector of     
@@ -133,9 +133,9 @@ class RenderButton(bpy.types.Operator):
         obname = context.active_object.name
         print('rendering %s' % obname)
 
-        data = generate_2d_draw_data(self, context)
+        data = generate_2d_draw_data(context)
         write_svg(data)
-        # select_front_facing(self, context)
+        # select_front_facing(context)
         return{'FINISHED'}  
 
 
