@@ -117,7 +117,7 @@ def select_front_facing(context):
     eye_location = rv3d.view_location + eye  
 
     for polygon in obj.data.polygons:
-        pnormal = polygon.normal
+        pnormal = obj.matrix_world * polygon.normal
         vert_index = polygon.vertices[0]
         world_coordinate = obj.matrix_world * vertlist[vert_index].co
                 
@@ -127,8 +127,10 @@ def select_front_facing(context):
                     "cam_loc %(eye_location)s" % vars())
             
         result_vector = eye_location-world_coordinate
-        dot_value = pnormal.dot(result_vector)            
-        if dot_value > 0.0:
+        dot_value = pnormal.dot(result_vector.normalized())            
+        if dot_value < 0.0:
+            polygon.select = False
+        else:
             polygon.select = True
     
      
@@ -145,9 +147,9 @@ class RenderButton(bpy.types.Operator):
         obname = context.active_object.name
         print('rendering %s' % obname)
 
-        data = generate_2d_draw_data(context)
-        write_svg(data)
-        # select_front_facing(context)
+        #data = generate_2d_draw_data(context)
+        #write_svg(data)
+        select_front_facing(context)
         return{'FINISHED'}  
 
 
