@@ -24,7 +24,7 @@ path_data = """\
 group_style_info = """\
     <g style ="    fill:none;
                    stroke:#000000;
-                   stroke-width:3;
+                   stroke-width:1.2;
                    stroke-linecap:butt;
                    stroke-linejoin:miter;
                    stroke-opacity:1;
@@ -68,17 +68,20 @@ def write_svg(data):
     return
 
 
+def get_locals(context):
+    region = context.region  
+    rv3d = context.space_data.region_3d  
+    obj = context.active_object
+    vertlist = obj.data.vertices
+    return region, rv3d, obj, vertlist
+
 
 def generate_2d_draw_data(context):
     """
     this gets vertex coordinates, converts local to global
     generates edge_list with 2d screen coordinates.
     """
-
-    region = context.region  
-    rv3d = context.space_data.region_3d  
-    obj = context.active_object
-    vertlist = obj.data.vertices
+    region, rv3d, obj, vertlist = get_locals(context)
 
     edge_list = []
     for edge in obj.data.edges:
@@ -93,10 +96,7 @@ def generate_2d_draw_data(context):
 # Candidate for refactor.
 def generate_2d_draw_list(unique_set, context):
 
-    region = context.region  
-    rv3d = context.space_data.region_3d  
-    obj = context.active_object
-    vertlist = obj.data.vertices
+    region, rv3d, obj, vertlist = get_locals(context)
 
     edge_list = []
     for edge in unique_set:
@@ -153,10 +153,7 @@ def select_front_facing(context):
     - If the value is greater than zero, it is facing away from the camera.
     """
     
-    region = context.region  
-    rv3d = context.space_data.region_3d  
-    obj = context.active_object
-    vertlist = obj.data.vertices
+    region, rv3d, obj, vertlist = get_locals(context)
 
     # [ ] be in object mode
     
