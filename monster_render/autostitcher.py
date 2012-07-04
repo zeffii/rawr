@@ -40,7 +40,7 @@ def get_stitch_list(path, filelist):
             match_str = match.group(1)
         else:
             print("your filenames should be formatted like:")
-            print("yourfilname_col_row.extention")
+            print("yourfilename_col_row.extention")
             print("if still issues, check/remove uncommon characters from path")
             return
 
