@@ -25,6 +25,9 @@ def green(input):
 def get_stitch_list(path, filelist):
     """ 
     stitchlist items are ((column,row), (x, y), '/path/name_with_extension')
+
+    returns None if something is wrong
+    returns stitchlist if everything made sense.
     """
 
     stitchlist = []
@@ -74,14 +77,7 @@ def makematrix(rows, columns, stitchlist):
     return main_matrix, px_wide, px_high
 
 
-# -- master functions
-
-def stitch(path):
-    if not path.endswith('/'):
-        path += '/'
-
-    input_format = '.' + 'png'
-    output_format = 'PNG'
+def get_filelist(path, input_format):
     os.chdir(path) # set this folder active
 
     mycurdir = os.getcwdu()
@@ -91,6 +87,29 @@ def stitch(path):
 
     if len(filelist) == 0:
         print(red('no files found - come on luke!'))
+        return
+
+    return filelist
+
+
+def correct_path(path):
+    if not path.endswith('/'):
+        path += '/'
+    return path
+
+
+# -- master functions
+
+def stitch(path):
+
+    input_format = '.' + 'png'
+    output_format = 'PNG'
+    output_filename = 'composite' + '.' + output_format.lower()
+
+    path = correct_path(path)
+    
+    filelist = get_filelist(path, input_format)
+    if filelist == None:
         return
     
     stitchlist = get_stitch_list(path, filelist)
@@ -122,7 +141,7 @@ def stitch(path):
         xpos += current_width
 
     comp_image.show()
-    comp_image.save(path+"composited.png", format=output_format)
+    comp_image.save(path + output_filename, format=output_format)
 
 
 
