@@ -37,8 +37,9 @@ def get_stitch_list(path, filelist):
         
         # disect filename, get dimensions
         db = Image.open(filepath)
+
         match = re.search('\_(\d+\_\d+)\.', filepath)
-        
+
         if match.group() != None:
             match_str = match.group(1)
         else:
@@ -98,12 +99,26 @@ def correct_path(path):
     return path
 
 
+def unsupported(inputMIME, outputMIME):
+    supported_types = ["TIFF", "PNG", "JPEG", "GIF", "BMP"]
+    if not (inputMIME and outputMIME in supported_types):
+        return True
+
+    return False
+
+
+
 # -- master functions
 
-def stitch(path):
+def stitch(path, filetypes):
+    inputMIME, outputMIME = filetypes.split(' ')
+    
+    # extra check before bothering.
+    if unsupported(inputMIME.upper(), outputMIME.upper()):
+        return
 
-    input_format = '.' + 'png'
-    output_format = 'PNG'
+    input_format = '.' + inputMIME.lower()
+    output_format = outputMIME.upper()
     output_filename = 'composite' + '.' + output_format.lower()
 
     path = correct_path(path)
@@ -115,6 +130,8 @@ def stitch(path):
     stitchlist = get_stitch_list(path, filelist)
     if stitchlist == None:
         return
+
+    # starts stitching process here.
 
     print('everything seems ok! attempting stitch')
     
@@ -147,9 +164,9 @@ def stitch(path):
 
 def help_string():
 
-    lazy_usage = red('python autostitcher.py -d')
+    lazy_usage = red('python autostitcher.py -d -c PNG PNG')
 
-    hasl_usage = red('python autostitcher.py filepath')
+    hasl_usage = red('python autostitcher.py /filepath/ -c PNG PNG')
 
     full_help = """\
     \n\n
@@ -161,7 +178,13 @@ def help_string():
     %(hasl_usage)s
     example: python autostitcher.py /home/username/somefolder/
     - attempts to stitch the content of the supplied path 
-    \n\n        
+    \n\n
+    At present the script only supports TIFF/PNG/JPEG/GIF/BMP.
+
+    In addition, you can modifiy the script to output RGBA but only for PNG out.
+    http://infohost.nmt.edu/tcc/help/pubs/pil/formats.html        
+
+    You must have no stray (or already composited) files in the directory
     """ % vars()
 
     return full_help
@@ -172,15 +195,16 @@ def main(args):
 
     if len(args) >= 1:
         argument = ' '.join(args[1:])
+        argument, filetypes = argument.split(' -c ')
                 
         if argument == '-d':
             print('will attempt stitching image content of current directory')
-            stitch(os.getcwd())
+            stitch(os.getcwd(), filetypes)
             return
         
         if os.path.isdir(argument):
             print('destination directory seems valid, will attempt stitch')
-            stitch(argument)
+            stitch(argument, filetypes)
             return
         else:
             print(red(argument + ' is not a valid directory or argument'))
