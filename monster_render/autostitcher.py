@@ -36,9 +36,13 @@ def get_stitch_list(path, filelist):
         filepath = path + strname
         
         # disect filename, get dimensions
-        db = Image.open(filepath)
-
         match = re.search('\_(\d+\_\d+)\.', filepath)
+
+        try:
+            match.group()
+        except:
+            print('found malformed filename [%s] in folder!' % red(strname))
+            return
 
         if match.group() != None:
             match_str = match.group(1)
@@ -47,6 +51,8 @@ def get_stitch_list(path, filelist):
             print("yourfilename_col_row.extention")
             print("if still issues, check/remove uncommon characters from path")
             return
+
+        db = Image.open(filepath)
 
         col_row = tuple(match_str.split("_"))
         col_row = [int(dimension) for dimension in col_row]
@@ -176,7 +182,7 @@ def help_string():
     - attempts to stitch the content of the folder that contains this script.
     
     %(hasl_usage)s
-    example: python autostitcher.py /home/username/somefolder/
+    example: python autostitcher.py /home/username/somefolder/ -c PNG PNG
     - attempts to stitch the content of the supplied path 
     \n\n
     At present the script only supports TIFF/PNG/JPEG/GIF/BMP.
@@ -193,7 +199,7 @@ def help_string():
 
 def main(args):
 
-    if len(args) >= 1:
+    if len(args) > 1:
         argument = ' '.join(args[1:])
         argument, filetypes = argument.split(' -c ')
                 
