@@ -16,10 +16,12 @@ from PIL import Image
 # -- helper functions
 
 def red(input):
-    return "\033[31m%s\033[0m" % input
+    #return "\033[31m%s\033[0m" % input
+    return input
 
 def green(input):
-    return("\033[36m%s\033[0m" % input)
+    #return "\033[36m%s\033[0m" % input
+    return input
 
 
 def get_stitch_list(path, filelist):
@@ -158,7 +160,7 @@ def stitch(path, filetypes):
         xpos += current_width
 
     comp_image.show()
-    
+
     output_filename = 'composite' + '.' + output_format.lower()
     comp_image.save(path + output_filename, format=output_format)
 
