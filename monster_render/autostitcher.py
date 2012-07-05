@@ -121,8 +121,6 @@ def stitch(path, filetypes):
 
     input_format = '.' + inputMIME.lower()
     output_format = outputMIME.upper()
-    output_filename = 'composite' + '.' + output_format.lower()
-
     path = correct_path(path)
     
     filelist = get_filelist(path, input_format)
@@ -160,6 +158,8 @@ def stitch(path, filetypes):
         xpos += current_width
 
     comp_image.show()
+    
+    output_filename = 'composite' + '.' + output_format.lower()
     comp_image.save(path + output_filename, format=output_format)
 
 
