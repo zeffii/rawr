@@ -42,16 +42,12 @@ def get_stitch_list(path, filelist):
             match.group()
         except:
             print('found malformed filename [%s] in folder!' % red(strname))
-            return
-
-        if match.group() != None:
-            match_str = match.group(1)
-        else:
             print("your filenames should be formatted like:")
             print("yourfilename_col_row.extention")
             print("if still issues, check/remove uncommon characters from path")
             return
-
+        
+        match_str = match.group(1)
         db = Image.open(filepath)
 
         col_row = tuple(match_str.split("_"))
