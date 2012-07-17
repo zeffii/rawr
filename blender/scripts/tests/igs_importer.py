@@ -1,3 +1,4 @@
+# early prototype of igs iges importer
 # import bpy
 
 filename = 'siggraphSpacecraft70.igs'
@@ -26,15 +27,41 @@ def split_into_fields(lines):
 
     there are three distinct states for this file
         - header
-        - patch declaration
+        - patch declarations
         - patch data
 
     first sate starts with characters
     second state starts with spaces
     third state starts with characters again
         - it is easy to split them on this idea alone.
+
     """
-    print(makeDiv('yay'))
+    print(makeDiv('content'))
+
+    # alias to keep the return statement readable
+    h = header = []
+    pdc = patch_declarations = []
+    pd = patch_data = []
+
+    STATE = 1
+    for line in lines:
+        if STATE == 1:
+            if line[0] is not ' ':
+                header.append(line)
+            else: 
+                STATE = 2
+
+        if STATE == 2:
+            if line[0] is ' ':
+                patch_declarations.append(line)
+            else:
+                STATE = 3
+
+        if STATE == 3:
+            patch_data.append(line)            
+
+    return h, pdc, pd
+
 
 
 def main():
@@ -44,7 +71,9 @@ def main():
         print('file doesn\'t appear to be at given location')
         return
     else:
-        split_into_fields(result)
+        h, pdc, pd = split_into_fields(result)
+        for i in pd[-18:]:
+            print(i)
         return
 
 main()
