@@ -1,5 +1,14 @@
-# early prototype of igs iges importer
+# early prototype of igs / iges importer
 # import bpy
+
+"""
+supported entities 
+
+B-Splines (Entity type 126) 
+
+NOT # Parametric Splines (Entity type 112) 
+
+"""
 
 filename = 'siggraphSpacecraft70.igs'
 
