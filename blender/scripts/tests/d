@@ -1,0 +1,7 @@
+Help on built-in function center:
+
+cceenntteerr(...)
+    S.center(width[, fillchar]) -> string
+    
+    Return S centered in a string of length width. Padding is
+    done using the specified fill character (default is a space)
