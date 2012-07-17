@@ -1,12 +1,14 @@
 # early prototype of igs / iges importer
 # import bpy
-
+import re
 """
-supported entities 
+possible entities:
+http://help.solidworks.com/2011/English/SolidWorks/
+sldworks/LegacyHelp/Sldworks/ImpExp/IGES_Entity_Types.htm
 
+supported entities 
 B-Splines (Entity type 126) 
 
-NOT # Parametric Splines (Entity type 112) 
 
 """
 
@@ -22,10 +24,9 @@ def get_raw_data(filename):
     except:
         return
 
-    # strips newlines while appending to lines list.
     lines = []
     for line in file_in_mem:
-        lines.append(line[:-1])
+        lines.append(line)
 
     return lines
 
@@ -67,9 +68,33 @@ def split_into_fields(lines):
                 STATE = 3
 
         if STATE == 3:
-            patch_data.append(line)            
+            # slightly verbose, for readability.
+            if ';' in line:
+                line_separated = line.split(';')
+                line = line_separated[0] + ';'
+            
+            patch_data.append(line)
 
     return h, pdc, pd
+
+
+def split_into_individual_paths(pd):
+    # strip off the last line
+    pd = pd[:-1]
+
+    # join file-lines that represent one path, split on semicolon
+    joined_list = '|'.join(pd)
+    joined_list = re.sub(' {2,}', ' ', joined_list)
+
+    properly_split = joined_list.split(';')
+    
+    num_paths_found = len(properly_split)
+
+    # i'm not to sure about what the first portion does, but 
+    # the part after 1.0, 1.0, 1.0 seems to be coordinates. up to 0.0, 1.0
+
+    print('%(num_paths_found)s paths found' % vars())
+    return properly_split
 
 
 
@@ -81,8 +106,12 @@ def main():
         return
     else:
         h, pdc, pd = split_into_fields(result)
-        for i in pd[-18:]:
+        path_list = split_into_individual_paths(pd)
+        # generate_paths_from_list(path_list)
+        for i in path_list[:20]:
             print(i)
+            print('---------')
+
         return
 
 main()
