@@ -88,8 +88,9 @@ def split_into_individual_paths(pd):
     pd = pd[:-1]
 
     # join file-lines that represent one path, split on semicolon
-    joined_list = '|'.join(pd)
+    joined_list = ''.join(pd)
     joined_list = re.sub(' {2,}', ' ', joined_list)
+    joined_list = joined_list.replace('\n', ',')
 
     properly_split = joined_list.split(';')
     
@@ -99,6 +100,11 @@ def split_into_individual_paths(pd):
     # the part after 1.0, 1.0, 1.0 seems to be coordinates. up to 0.0, 1.0
 
     print('%(num_paths_found)s paths found' % vars())
+
+
+
+
+
     return properly_split
 
 
