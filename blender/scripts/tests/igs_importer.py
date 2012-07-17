@@ -36,8 +36,6 @@ def get_raw_data(filename):
 
 def split_into_fields(lines):
     """
-    incoming data is the igs file as a list with newlines removed.
-
     there are three distinct states for this file
         - header
         - patch declarations
