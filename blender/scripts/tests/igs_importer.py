@@ -95,17 +95,29 @@ def split_into_individual_paths(pd):
     properly_split = joined_list.split(';')
     
     num_paths_found = len(properly_split)
-
-    # i'm not to sure about what the first portion does, but 
-    # the part after 1.0, 1.0, 1.0 seems to be coordinates. up to 0.0, 1.0
-
     print('%(num_paths_found)s paths found' % vars())
 
+    further_split = []
+    for entity in properly_split:
+        if ',' in entity:
+            further_split.append(entity.split(','))
+
+    return further_split
 
 
+def generate_paths_from_list(path_list):
+    """
+    my understanding from the siggraph test files is now:
+    - the first integer is the entity type
+    - followed by six integers (the first of which can be either 5 or 3)
+    - followed by 8 float (4 times 2 different values)
+    - followed by 4 or 6 weighted floats 
+        - if element 2 is a 3 then 4 weighted floats
+        - if element 2 is a 5 then 6 weighted floats
 
+    """
 
-    return properly_split
+    pass
 
 
 
@@ -118,8 +130,9 @@ def main():
     else:
         h, pdc, pd = split_into_fields(result)
         path_list = split_into_individual_paths(pd)
-        # generate_paths_from_list(path_list)
-        for i in path_list[:20]:
+        generate_paths_from_list(path_list)
+
+        for i in path_list:
             print(i)
             print('---------')
 
