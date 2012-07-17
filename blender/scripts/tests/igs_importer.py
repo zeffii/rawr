@@ -20,6 +20,7 @@ def makeDiv(input):
 
 def get_raw_data(filename):
     try:
+        # file_in_mem = open(filename)
         file_in_mem = open(filename)
     except:
         return
@@ -28,6 +29,8 @@ def get_raw_data(filename):
     for line in file_in_mem:
         lines.append(line)
 
+    # be explicit
+    file_in_mem.close()
     return lines
 
 
