@@ -41,7 +41,7 @@ def split_into_fields(lines):
         - patch declarations
         - patch data
 
-    first sate starts with characters
+    first state starts with characters
     second state starts with spaces
     third state starts with characters again
         - it is easy to split them on this idea alone.
