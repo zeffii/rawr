@@ -73,6 +73,10 @@ def split_into_fields(lines):
             if ';' in line:
                 line_separated = line.split(';')
                 line = line_separated[0] + ';'
+
+            if ', ' in line:
+                line_separated = line.split(', ')
+                line = line_separated[0] + '\n'
             
             patch_data.append(line)
 
