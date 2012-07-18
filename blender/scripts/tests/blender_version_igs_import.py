@@ -186,7 +186,7 @@ def main():
         BSplines = generate_paths_from_list(path_list)
         
         for idx, spline in enumerate(BSplines):
-            id_num = str(idx)
+            id_num = str(idx).zfill(4)
             object_name = 'Obj_named_' + id_num
             curve_name = 'Curve_named_' + id_num
             MakePolyLine(object_name, curve_name, spline) 
