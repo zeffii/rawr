@@ -129,11 +129,12 @@ def generate_paths_from_list(path_list):
                 bspline_type = path[1]
                 if bspline_type == '3':
                     current_path = path[19:-5]
-                    current_path = [float(i) for i in current_path]
-                    BSplines.append(current_path)
+                    cp = [float(i) for i in current_path]
+                    cp = [tuple(cp[i:i+3]) for i in range(0, len(cp), 3)]
+                    BSplines.append(cp)
                     print('3')
-                    print(current_path)
-                    print(len(current_path))
+                    print(cp)
+                    print(len(cp))
                 elif bspline_type == '5':
                     print('bspline v5 not handled yet')
                     continue
