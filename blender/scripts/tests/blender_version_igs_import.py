@@ -13,7 +13,7 @@ early prototype of igs / iges importer
 # tested on 
 # filename = 'siggraphSpacecraft70.igs'
 
-filename = 'siggraphSpacecraft71.igs'
+filename = 'siggraphSpacecraft72.igs'
 filename = '/home/zeffii/Downloads/igs_siggraph/' + filename
 
 def makeDiv(input):
@@ -136,9 +136,15 @@ def generate_paths_from_list(path_list):
             if path[0] == '126':
                 
                 # looks like a pattern has developed! 
+                # 126, n, 3
+                # 126, 1, 1
+                #
                 
                 bspline_type = path[1]
-                if bspline_type == '3':
+                if bspline_type == '1':
+                    cp = get_bspline(path, 13, -5)
+
+                elif bspline_type == '3':
                     cp = get_bspline(path, 19, -5)
 
                 elif bspline_type == '5':
