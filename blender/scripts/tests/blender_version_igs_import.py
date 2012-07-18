@@ -1,5 +1,4 @@
-# early prototype of igs / iges importer
-# import bpy
+import bpy
 import re
 """
 possible entities:
@@ -9,7 +8,7 @@ sldworks/LegacyHelp/Sldworks/ImpExp/IGES_Entity_Types.htm
 supported entities 
 B-Splines (Entity type 126) 
 
-
+early prototype of igs / iges importer
 """
 
 filename = 'siggraphSpacecraft70.igs'
@@ -152,6 +151,29 @@ def generate_paths_from_list(path_list):
     return BSplines
 
 
+w = 1 # weight
+
+def MakePolyLine(objname, curvename, cList):    
+    curvedata = bpy.data.curves.new(name=curvename, type='CURVE')    
+    curvedata.dimensions = '3D'    
+    
+    objectdata = bpy.data.objects.new(objname, curvedata)    
+    objectdata.location = (0,0,0) #object origin    
+    bpy.context.scene.objects.link(objectdata)    
+    
+    polyline = curvedata.splines.new('NURBS')    
+    polyline.points.add(len(cList)-1)    
+    for num in range(len(cList)):    
+        x, y, z = cList[num]
+        x, y, z = x/1000.,y/1000.,z/1000.
+        polyline.points[num].co = (x, y, z, w)    
+    
+    polyline.order_u = len(polyline.points)-1  
+    polyline.use_endpoint_u = True  
+      
+
+
+
 def main():
 
     result = get_raw_data(filename)
@@ -161,8 +183,17 @@ def main():
     else:
         h, pdc, pd = split_into_fields(result)
         path_list = split_into_individual_paths(pd)
-        generate_paths_from_list(path_list)
+        BSplines = generate_paths_from_list(path_list)
+        
+        for idx, spline in enumerate(BSplines):
+            id_num = str(idx)
+            object_name = 'Obj_named_' + id_num
+            curve_name = 'Curve_named_' + id_num
+            MakePolyLine(object_name, curve_name, spline) 
     return
 
 
 main()
+
+
+    
