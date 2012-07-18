@@ -10,8 +10,10 @@ B-Splines (Entity type 126)
 
 early prototype of igs / iges importer
 """
+# tested on 
+# filename = 'siggraphSpacecraft70.igs'
 
-filename = 'siggraphSpacecraft70.igs'
+filename = 'siggraphSpacecraft71.igs'
 filename = '/home/zeffii/Downloads/igs_siggraph/' + filename
 
 def makeDiv(input):
@@ -132,20 +134,34 @@ def generate_paths_from_list(path_list):
             continue
         else:
             if path[0] == '126':
+                
+                # looks like a pattern has developed! 
+                
                 bspline_type = path[1]
                 if bspline_type == '3':
                     cp = get_bspline(path, 19, -5)
-                    BSplines.append(cp)
 
                 elif bspline_type == '5':
                     cp = get_bspline(path, 23, -5)
-                    BSplines.append(cp)
-                    continue
+
+                elif bspline_type == '7':
+                    cp = get_bspline(path, 27, -5)
+                
+                elif bspline_type == '9':
+                    cp = get_bspline(path, 31, -5)
+
+                elif bspline_type == '11':                                       
+                    cp = get_bspline(path, 35, -5)
 
                 else:
                     print('BSpline with unhandled content: ' + bspline_type)
+                    print(path)
+                    print('---------')
+                    continue
+                
+                BSplines.append(cp)                
 
-            # print('---------')
+
 
     return BSplines
 
