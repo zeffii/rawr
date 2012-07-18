@@ -12,7 +12,7 @@ early prototype of igs / iges importer
 """
 
 filename = 'siggraphSpacecraft70.igs'
-filename = '/home/zeffii/Desktop/RAWR/blender/scripts/tests/' + filename
+filename = '/home/zeffii/Downloads/igs_siggraph/' + filename
 
 def makeDiv(input):
     return input.center(80, '-')
