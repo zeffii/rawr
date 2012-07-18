@@ -49,11 +49,11 @@ def split_into_fields(lines):
     print(makeDiv('content'))
 
     # alias to keep the return statement readable
-    header = []
-    patch_declarations = []
-    patch_data = []
+    h = header = []
+    pdc = patch_declarations = []
+    pd = patch_data = []
+    
     STATE = 1
-
     for line in lines:
         if STATE == 1:
             if not line[0] == ' ':
@@ -79,8 +79,7 @@ def split_into_fields(lines):
             
             patch_data.append(line)
 
-    return header, patch_declarations, patch_data
-
+    return h, pdc, pd
 
 def split_into_individual_paths(pd):
     # strip off the last line
