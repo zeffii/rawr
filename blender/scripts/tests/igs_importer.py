@@ -94,8 +94,8 @@ def split_into_individual_paths(pd):
 
     properly_split = joined_list.split(';')
     
-    num_paths_found = len(properly_split)
-    print('%(num_paths_found)s paths found' % vars())
+    num_paths_found = str(len(properly_split))
+    print(makeDiv(num_paths_found + ' paths found'))
 
     further_split = []
     for entity in properly_split:
@@ -116,9 +116,37 @@ def generate_paths_from_list(path_list):
         - if element 2 is a 5 then 6 weighted floats
 
     """
+    valid_path_types = ('126')
 
-    pass
+    BSplines = []
 
+    for path in path_list:
+        if path[0] not in valid_path_types:
+            print(path[0], 'has not been implemented yet')
+            continue
+        else:
+            if path[0] == '126':
+                bspline_type = path[1]
+                if bspline_type == '3':
+                    current_path = path[19:-5]
+                    current_path = [float(i) for i in current_path]
+                    BSplines.append(current_path)
+                    print('3')
+                    print(current_path)
+                    print(len(current_path))
+                elif bspline_type == '5':
+                    print('bspline v5 not handled yet')
+                    continue
+                    # current_path = path[22:-5]
+                    # BSplines.append(current_path)
+                    # print('5')
+                    # print(current_path)
+                else:
+                    print('BSpline with unhandled content: ' + bspline_type)
+
+            print('---------')
+
+    return BSplines
 
 
 def main():
@@ -131,11 +159,7 @@ def main():
         h, pdc, pd = split_into_fields(result)
         path_list = split_into_individual_paths(pd)
         generate_paths_from_list(path_list)
+    return
 
-        for i in path_list:
-            print(i)
-            print('---------')
-
-        return
 
 main()
