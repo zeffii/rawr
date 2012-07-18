@@ -119,6 +119,14 @@ def generate_paths_from_list(path_list):
 
     BSplines = []
 
+    def get_bspline(path, _from, _to):
+        current_path = path[_from: _to]
+        cp = [float(i) for i in current_path]
+        iteration_list = list(range(0, len(cp), 3))
+        cp = [tuple(cp[i:i+3]) for i in iteration_list]
+        return cp
+
+
     for path in path_list:
         if path[0] not in valid_path_types:
             print(path[0], 'has not been implemented yet')
@@ -127,15 +135,17 @@ def generate_paths_from_list(path_list):
             if path[0] == '126':
                 bspline_type = path[1]
                 if bspline_type == '3':
-                    current_path = path[19:-5]
-                    cp = [float(i) for i in current_path]
-                    iteration_list = list(range(0, len(cp), 3))
-                    cp = [tuple(cp[i:i+3]) for i in iteration_list]
+                    # current_path = path[19:-5]
+                    # cp = [float(i) for i in current_path]
+                    # iteration_list = list(range(0, len(cp), 3))
+                    # cp = [tuple(cp[i:i+3]) for i in iteration_list]
+                    cp = get_bspline(path, 19, -5)
                     BSplines.append(cp)
 
                 elif bspline_type == '5':
                     print('bspline v5 not handled yet')
                     print(path)
+                    print('----')
                     continue
                     # current_path = path[22:-5]
                     # BSplines.append(current_path)
