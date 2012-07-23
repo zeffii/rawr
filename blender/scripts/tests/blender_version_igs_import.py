@@ -136,31 +136,21 @@ def generate_paths_from_list(path_list):
             if path[0] == '126':
                 
                 # looks like a pattern has developed! 
-                # 126, n, 3
-                # 126, 1, 1
-                #
+                supported_types = { '1' : (13, -5),
+                                    '3' : (19, -5),
+                                    '5' : (23, -5),
+                                    '7' : (27, -5),
+                                    '9' : (31, -5),
+                                    '11': (35, -5),
+                                    '12': (37, -5)
+                }
                 
                 bspline_type = path[1]
-                if bspline_type == '1':
-                    cp = get_bspline(path, 13, -5)
 
-                elif bspline_type == '3':
-                    cp = get_bspline(path, 19, -5)
+                if bspline_type in supported_types:
 
-                elif bspline_type == '5':
-                    cp = get_bspline(path, 23, -5)
-
-                elif bspline_type == '7':
-                    cp = get_bspline(path, 27, -5)
-                
-                elif bspline_type == '9':
-                    cp = get_bspline(path, 31, -5)
-
-                elif bspline_type == '11':                                       
-                    cp = get_bspline(path, 35, -5)
-
-                elif bspline_type == '12':                                       
-                    cp = get_bspline(path, 37, -5)
+                    _from, _to = supported_types[bspline_type]
+                    cp = get_bspline(path, _from, _to)
 
                 else:
                     print('BSpline with unhandled content: ' + bspline_type)
