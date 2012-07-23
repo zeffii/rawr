@@ -4,12 +4,12 @@ from mathutils import Vector
 
 class ButtonOne(bpy.types.Operator):
     """Defines a button"""
-    bl_idname = "svg.dostuff"
+    bl_idname = "scene.dostuff"
     bl_label = "Sometype of operator"
  
     def execute(self, context):
         # do your stuff here, this will have view3d as context
-        
+        print('rawr')
         return{'FINISHED'}  
 
 
@@ -30,7 +30,7 @@ class OperatorPanel(bpy.types.Panel):
         # display label and button
         if not obj == None:
             row.label(text="Active object is: " + obj.name)
-            self.layout.operator("svg.dostuff", text='Description of utility')
+            self.layout.operator("scene.dostuff", text='Description of utility')
 
 
 

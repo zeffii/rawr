@@ -13,7 +13,7 @@ early prototype of igs / iges importer
 # tested on 
 # filename = 'siggraphSpacecraft70.igs'
 
-filename = 'siggraphSpacecraft72.igs'
+filename = 'siggraphSpacecraft22.igs'
 filename = '/home/zeffii/Downloads/igs_siggraph/' + filename
 
 def makeDiv(input):
@@ -158,6 +158,9 @@ def generate_paths_from_list(path_list):
 
                 elif bspline_type == '11':                                       
                     cp = get_bspline(path, 35, -5)
+
+                elif bspline_type == '12':                                       
+                    cp = get_bspline(path, 37, -5)
 
                 else:
                     print('BSpline with unhandled content: ' + bspline_type)
