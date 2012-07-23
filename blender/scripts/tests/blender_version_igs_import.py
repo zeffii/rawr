@@ -118,13 +118,29 @@ def generate_paths_from_list(path_list):
     """
     valid_path_types = ('126')
 
+    # looks like a pattern has developed! 
+    supported_entity_126 = {    '1' : (13, -5),
+                                '3' : (19, -5),
+                                '5' : (23, -5),
+                                '7' : (27, -5),
+                                '9' : (31, -5),
+                                '11': (35, -5),
+                                '12': (37, -5)
+                            }
+
     BSplines = []
 
     def get_bspline(path, _from, _to):
+        """ 
+        input: the slightly preformatted raw path
+        output: the floatized tuple of threes for (x,y,z)
+        """
+
         current_path = path[_from: _to]
         cp = [float(i) for i in current_path]
         iteration_list = list(range(0, len(cp), 3))
         cp = [tuple(cp[i:i+3]) for i in iteration_list]
+
         return cp
 
 
@@ -132,26 +148,15 @@ def generate_paths_from_list(path_list):
         if path[0] not in valid_path_types:
             print(path[0], 'has not been implemented yet')
             continue
+
         else:
             if path[0] == '126':
-                
-                # looks like a pattern has developed! 
-                supported_types = { '1' : (13, -5),
-                                    '3' : (19, -5),
-                                    '5' : (23, -5),
-                                    '7' : (27, -5),
-                                    '9' : (31, -5),
-                                    '11': (35, -5),
-                                    '12': (37, -5)
-                }
-                
+
                 bspline_type = path[1]
 
-                if bspline_type in supported_types:
-
-                    _from, _to = supported_types[bspline_type]
+                if bspline_type in supported_entity_126:
+                    _from, _to = supported_entity_126[bspline_type]
                     cp = get_bspline(path, _from, _to)
-
                 else:
                     print('BSpline with unhandled content: ' + bspline_type)
                     print(path)
@@ -160,12 +165,8 @@ def generate_paths_from_list(path_list):
                 
                 BSplines.append(cp)                
 
-
-
     return BSplines
 
-
-w = 1 # weight
 
 def MakePolyLine(objname, curvename, cList):    
     curvedata = bpy.data.curves.new(name=curvename, type='CURVE')    
@@ -180,12 +181,10 @@ def MakePolyLine(objname, curvename, cList):
     for num in range(len(cList)):    
         x, y, z = cList[num]
         x, y, z = x/1000.,y/1000.,z/1000.
-        polyline.points[num].co = (x, y, z, w)    
+        polyline.points[num].co = (x, y, z, 1)    
     
     polyline.order_u = len(polyline.points)-1  
     polyline.use_endpoint_u = True  
-      
-
 
 
 def main():
