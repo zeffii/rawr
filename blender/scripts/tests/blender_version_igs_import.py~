@@ -107,11 +107,14 @@ def split_into_individual_paths(pd):
 
 def generate_paths_from_list(path_list):
     """
-    my understanding from the siggraph test files doesn't
-    extend to describing what the unused (by me) content 
-    of each line is supposed to contain: They don't seem 
-	 to be weights - maybe they are unique identifiers or 
-	 line thickness. No idea.
+    my understanding from the siggraph test files is now:
+    - the first integer is the entity type
+    - followed by six integers (the first of which can be either 5 or 3)
+    - followed by 8 float (4 times 2 different values)
+    - followed by 4 or 6 weighted floats 
+        - if element 2 is a 3 then 4 weighted floats
+        - if element 2 is a 5 then 6 weighted floats
+
     """
     valid_path_types = ('126')
 
