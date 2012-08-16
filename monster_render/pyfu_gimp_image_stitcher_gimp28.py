@@ -8,7 +8,7 @@ import re
 def get_dimensions_from_imagename(input_name):
     # matches last 2 digit clusters of a filename
     print(input_name)
-    match = re.search('\_(\d+\_\d+)\.', input_name)
+    match = re.search('_(\d+_\d+)\.', input_name)
 
     if match != None:
         match_str = match.group(1)
