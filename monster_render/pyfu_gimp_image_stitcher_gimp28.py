@@ -7,7 +7,6 @@ import re
 
 def get_dimensions_from_imagename(input_name):
     # matches last 2 digit clusters of a filename
-    print(input_name)
     match = re.search('_(\d+_\d+)\.', input_name)
 
     if match != None:
@@ -15,6 +14,7 @@ def get_dimensions_from_imagename(input_name):
         col_row = tuple(match_str.split("_"))
         return [int(dim) for dim in col_row]
     else:
+        print('didn\'t find suitable filenames')
         return
         
 
@@ -34,7 +34,6 @@ def main_process(final_string_name):
     if response != None:
         cols, rows = response
     else:
-        print('didn\'t find suitable filenames')
         return
 
     # composite dimensions
@@ -52,8 +51,6 @@ def main_process(final_string_name):
         c, r = c-1, r-1
         x_trans = c * last_layer.width
         y_trans = r * last_layer.height
-        
-        print('translate:', layer_info, 'x=',x_trans, ' y=',y_trans)
         gimg.layers[idx].translate(x_trans, y_trans)
 
     gimg.flatten()
