@@ -10,7 +10,9 @@ some conventions:
     rc  = coordinate
     co  = coordinate
     rcs = coordinates
-    idx = index (refers only to the converted dm from img.pixels)
+    r = row
+    c = column
+    idx = index (refers only to the dm extracted from img.pixels)
 """
 
 high_firefly_count_text = """\
@@ -119,7 +121,7 @@ def coordinates_in_corner(r, c, w, h):
 
 
 def get_surrounding_rc_from_index(r, c, w, h):
-    """ surrounding row column coordinates given the current coordinate """
+    """ return surrounding row column coordinates given the current coordinate """
         
     in_corner, corner_list = coordinates_in_corner(r, c, w, h)
     
@@ -210,7 +212,7 @@ def is_firefly(idx, img, dm):
 
 
 def make_firefly_list(dm, img):
-    """ find and index non engulfed bright pixels """
+    """ find, index and return a list of potential fireflies """
     if INTERACTIVE: print('> analyzing image ', end='')
         
     firefly_count = 0
@@ -234,7 +236,7 @@ def make_firefly_list(dm, img):
 
 
 def fix_fireflies(img, idx_list, dm):
-    """ make 1D and then 2d list for convenience, returns a dm """
+    """ make 1D and then 2D list for convenience, returns a dm """
     w = width = img.size[0]
     
     # turn into 2d grid
