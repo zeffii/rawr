@@ -19,11 +19,10 @@ This repository contains my favourite homebrew scripts. Any future blender scrip
 - Empty placing addon.py: places empties at selected vertex locations.
 
 `/image_manipulation/`  
-- firefly removal extended.py: this is a tentative and primative approach to dealing with obvious fireflies automatically without imploying bidirectional smoothing. discontinued due to better cycles algorithms and special composite nodes. It's a very interesting field!
+- firefly removal extended.py: this is a tentative and primative approach to dealing with obvious fireflies automatically without imploying bidirectional smoothing. discontinued due to better cycles algorythms and special composite nodes. It's a very interesting field!
 
 `/templates/`  
 - operator and button 3dview.py: i use this to quickly load a boilerplate for random projects, includes references to often used views.
 
 `/svg_tests/`  
 - bpy to svg.py: can render the currently selected object from 3dview as an svg and writes it out onto the filesystem.
-
