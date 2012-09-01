@@ -1,3 +1,35 @@
+"""
+bl_info = {
+    "name": "Text Appeal",
+    "author": "zeffii",
+    "version": (0, 1, 0),
+    "blender": (2, 6, 1),
+    "location": "TextEditor - multiple places",
+    "description": "Adds eval and chroma button.",
+    "wiki_url": "",
+    "tracker_url": "",
+    "category": "Text Editor"}
+
+
+Categories:
+3D View, Add Curve, Add Mesh, Animation, Development, Game Engine,
+Import-Export, Material, Mesh, Object, Paint, Render, Rigging, Sequencer, System, Text Editor
+
+
+bl_space_type: 
+enum in [‘WINDOW’, ‘HEADER’, ‘CHANNELS’, ‘TEMPORARY’, ‘UI’, ‘TOOLS’, 
+‘TOOL_PROPS’, ‘PREVIEW’], 
+default ‘WINDOW’
+
+region_type:
+enum in [‘EMPTY’, ‘VIEW_3D’, ‘GRAPH_EDITOR’, ‘OUTLINER’, ‘PROPERTIES’, 
+‘FILE_BROWSER’, ‘IMAGE_EDITOR’, ‘INFO’, ‘SEQUENCE_EDITOR’, ‘TEXT_EDITOR’, 
+‘AUDIO_WINDOW’, ‘DOPESHEET_EDITOR’, ‘NLA_EDITOR’, ‘SCRIPTS_WINDOW’, 
+‘TIMELINE’, ‘NODE_EDITOR’, ‘LOGIC_EDITOR’, ‘CONSOLE’, ‘USER_PREFERENCES’], 
+default ‘EMPTY’
+
+""" 
+
 import bpy
 from mathutils import Vector
 
