@@ -1,9 +1,11 @@
 This repository contains my favourite homebrew scripts. Any future blender scripting that I do will be available from here. 
 
-##### blender/scripts/addons_contrib/text_editor_extras/
-[text editor eval selection](https://github.com/zeffii/rawr/tree/master/blender/scripts/addons_contrib/text_editor_extras): Will eval the current selection and replace it with the result.  
+### Addons ( Script + UI + addon boilerplate to appear in addons menu)
 
-[text editor chroma key](https://github.com/zeffii/rawr/tree/master/blender/scripts/addons_contrib/text_editor_extras): A one click method to enable syntax highlighting and ruler etc.  
+##### blender/scripts/addons_contrib/text_editor_extras/
+[text editor eval selection.py](https://github.com/zeffii/rawr/tree/master/blender/scripts/addons_contrib/text_editor_extras): Will eval the current selection and replace it with the result.  
+
+[text editor chroma key.py](https://github.com/zeffii/rawr/tree/master/blender/scripts/addons_contrib/text_editor_extras): A one click method to enable syntax highlighting and ruler etc.  
 
 ##### blender/scripts/addons_contrib/io_material_loader/
 [this addon](https://github.com/zeffii/rawr/tree/master/blender/scripts/addons_contrib/io_material_loader): An example of how to link_append from other blender files, to turn them into a library.  
@@ -19,6 +21,8 @@ This repository contains my favourite homebrew scripts. Any future blender scrip
 [mesh edge intersection tools.py](https://github.com/zeffii/rawr/blob/master/blender/scripts/addons_contrib/mesh_edge_intersection_tools.py): edge projection(V), edge extention(T) and edge intersection(X) tool. (ugly but battle hardened). Included in [Blenders SVN for addons_contrib](http://wiki.blender.org/index.php/Extensions:2.6/Py/Scripts/Modeling/Edge_Slice)  
 
 [Empty placing addon.py](https://github.com/zeffii/rawr/blob/master/blender/scripts/addons_contrib/Empty_placing_addon.py): Places empties at selected vertex locations.  
+
+### Scripts ( Script (with optional UI) - run from text editor)
 
 ##### blender/scripts/image_manipulation/
 [firefly removal extended.py](https://github.com/zeffii/rawr/blob/master/blender/scripts/image_manipulation/firefly_removal_extended.py): This is a tentative and primative approach to dealing with obvious fireflies automatically without imploying bidirectional smoothing. discontinued due to better cycles algorithms and special composite nodes. It's a very interesting field!  
