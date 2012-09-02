@@ -41,7 +41,7 @@ class ButtonOne(bpy.types.Operator):
     def execute(self, context):
         # do your stuff here, this will have view3d as context
         print('rawr')
-        return{'FINISHED'}  
+        return{'FINISHED'}
 
 
 class OperatorPanel(bpy.types.Panel):

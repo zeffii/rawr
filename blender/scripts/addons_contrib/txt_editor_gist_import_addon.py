@@ -83,7 +83,7 @@ def initSceneProperties(scn):
         default = ""
     )  
 
- 
+
 initSceneProperties(bpy.context.scene)
 classes = [OperatorPanel, ButtonOne]
 
