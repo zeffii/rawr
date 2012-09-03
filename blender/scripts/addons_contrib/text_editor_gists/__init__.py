@@ -25,7 +25,7 @@ bl_info = {
     "name": "Gist IO",
     "author": "Dealga McArdle",
     "version": (0, 1, 0),
-    "blender": (2, 6, 1),
+    "blender": (2, 6, 4),
     "location": "TextEditor - toolbar",
     "description": "Import downloads gist by ID as new text item, export copies gist url to clipboard.",
     "wiki_url": "",
