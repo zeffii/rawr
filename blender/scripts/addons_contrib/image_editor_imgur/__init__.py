@@ -22,56 +22,28 @@
 # ***** END GPL LICENCE BLOCK *****
 
 bl_info = {
-    "name": "Gist IO",
+    "name": "Imgur Upload",
     "author": "Dealga McArdle",
     "version": (0, 1, 0),
     "blender": (2, 6, 4),
-    "location": "TextEditor - toolbar",
-    "description": "Import downloads gist by ID as new text item, export copies gist url to clipboard.",
+    "location": "ImageEditor - toolbar",
+    "description": "Upload to Imgur.",
     "wiki_url": "",
     "tracker_url": "",
-    "category": "Text Editor"}
+    "category": "Image Editor"}
 
 
 if "bpy" in locals():
     import imp
-    imp.reload(gist_import_addon)
-    imp.reload(gist_upload_addon)
+    imp.reload(imgur_upload_addon)
 else:
-    from . import gist_import_addon
-    from . import gist_upload_addon
+    from image_editor_imgur import imgur_upload_addon
 
 import bpy
-from bpy.props import StringProperty
-
-
-def initSceneGistProperties(scn):
- 
-    bpy.types.Scene.gist_id_property = StringProperty(
-        name = "Gist ID",
-        description = "Github Gist ID to download as new internal file",
-        default = ""
-    )  
-
-    bpy.types.Scene.gist_name = StringProperty(
-        name = "Name",
-        description = "Name for Gist",
-        default = ".py"
-    )
-
-    bpy.types.Scene.gist_description = StringProperty(
-        name = "Description",
-        description = "Description for Gist",
-        default = ""
-    )
-
-initSceneGistProperties(bpy.context.scene)
 
 gist_classes = (
-    gist_import_addon.GistDownloadPanel,
-    gist_import_addon.GistDownloadButton,
-    gist_upload_addon.GistUploadPanel,
-    gist_upload_addon.GistUploadButton
+    imgur_upload_addon.ImageUploadPanel,
+    imgur_upload_addon.ImageUploadButton
 )    
 
 
@@ -86,5 +58,4 @@ def unregister():
 
     
 if __name__ == "__main__":
-    #initSceneGistProperties(bpy.context.scene)
     register()
