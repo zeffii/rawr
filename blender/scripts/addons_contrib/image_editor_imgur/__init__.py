@@ -41,21 +41,12 @@ else:
 
 import bpy
 
-gist_classes = (
-    imgur_upload_addon.ImageUploadPanel,
-    imgur_upload_addon.ImageUploadButton
-)    
-
-
 def register():
-    for i in gist_classes:
-        bpy.utils.register_class(i)
+    bpy.utils.register_module(__name__)
 
 
 def unregister():
-    for i in gist_classes:
-        bpy.utils.unregister_class(i)
-
+    bpy.utils.unregister_module(__name__)
     
 if __name__ == "__main__":
     register()
