@@ -37,9 +37,11 @@ if "bpy" in locals():
     import imp
     imp.reload(text_editor_chroma)
     imp.reload(text_editor_eval)
+    imp.reload(text_editor_searchpydocs)
 else:
     from text_editor_extras import text_editor_chroma
     from text_editor_extras import text_editor_eval
+    from text_editor_extras import text_editor_searchpydocs
 
 import bpy
 
@@ -50,18 +52,16 @@ def draw_item(self, context):
 
 def eval_menu_item(self, context):
     layout = self.layout
-    layout.operator("txt.eval_selected_text", text='Eval Selected')    
-    
+    layout.operator("txt.eval_selected_text", text='Eval Selected')
+    layout.operator("txt.search_pydocs", text='Search Pydocs')
 
 def register():
-    bpy.utils.register_class(text_editor_chroma.SetTextPreferences)
-    bpy.utils.register_class(text_editor_eval.TextEval)
+    bpy.utils.register_module(__name__)
     bpy.types.TEXT_HT_header.prepend(draw_item)
     bpy.types.TEXT_MT_toolbox.prepend(eval_menu_item)    
 
 def unregister():
-    bpy.utils.unregister_class(text_editor_chroma.SetTextPreferences)
-    bpy.utils.unregister_class(text_editor_eval.TextEval)
+    bpy.utils.unregister_module(__name__)    
     bpy.types.TEXT_HT_header.remove(draw_item)
     bpy.types.TEXT_MT_toolbox.remove(eval_menu_item)
     
