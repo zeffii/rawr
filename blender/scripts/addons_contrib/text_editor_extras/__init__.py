@@ -39,11 +39,13 @@ if "bpy" in locals():
     imp.reload(text_editor_eval)
     imp.reload(text_editor_searchpydocs)
     imp.reload(text_editor_searchbpydocs)
+    imp.reload(text_editor_searchblenderscripting)
 else:
     from text_editor_extras import text_editor_chroma
     from text_editor_extras import text_editor_eval
     from text_editor_extras import text_editor_searchpydocs
     from text_editor_extras import text_editor_searchbpydocs
+    from text_editor_extras import text_editor_searchblenderscripting
 
 import bpy
 
@@ -57,6 +59,7 @@ def eval_menu_item(self, context):
     layout.operator("txt.eval_selected_text", text='Eval Selected')
     layout.operator("txt.search_pydocs", text='Search Pydocs')
     layout.operator("txt.search_bpydocs", text='Search bpy docs')
+    layout.operator("txt.search_blenderscripting", text='Search bscripting')
 
 def register():
     bpy.utils.register_module(__name__)
