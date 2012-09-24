@@ -13,9 +13,9 @@
 # You should have received a copy of the GNU General Public License
 # along with this program. If not, write to:
 #
-#	the Free Software Foundation Inc.
-#	51 Franklin Street, Fifth Floor
-#	Boston, MA 02110-1301, USA
+#   the Free Software Foundation Inc.
+#   51 Franklin Street, Fifth Floor
+#   Boston, MA 02110-1301, USA
 #
 # or go online at: http://www.gnu.org/licenses/ to view license options.
 #
@@ -54,22 +54,46 @@ def draw_item(self, context):
     layout = self.layout
     layout.operator("txt.set_text_prefs", icon='COLOR')
 
-def eval_menu_item(self, context):
-    layout = self.layout
-    layout.operator("txt.eval_selected_text", text='Eval Selected')
-    layout.operator("txt.search_pydocs", text='Search Pydocs')
-    layout.operator("txt.search_bpydocs", text='Search bpy docs')
-    layout.operator("txt.search_blenderscripting", text='Search bscripting')
+
+class BasicTextMenu(bpy.types.Menu):
+    bl_idname = "TEXT_MT_search_menu"
+    bl_label = "Search"
+
+    @classmethod
+    def poll(self, context):
+        text = bpy.context.edit_text
+        return has_selection(text)
+
+    def draw(self, context):
+        layout = self.layout
+        layout.operator("txt.eval_selected_text", text='Eval Selected')
+        layout.operator("txt.search_pydocs", text='Search Pydocs')
+        layout.operator("txt.search_bpydocs", text='Search bpy docs')
+        layout.operator("txt.search_blenderscripting", text='Search bscripting')
+
+
+def has_selection(text):
+    return not (text.select_end_line == text.current_line and \
+    text.current_character == text.select_end_character)
+
+
+# Sets the keymap to Ctrl + I for inside the text editor, will only
+# appear if a selection is set.
+if True:
+    wm = bpy.context.window_manager
+    km = wm.keyconfigs.default.keymaps['Text']
+    new_shortcut = km.keymap_items.new('wm.call_menu', 'I', 'PRESS', ctrl=True)
+    new_shortcut.properties.name = 'TEXT_MT_search_menu'
 
 def register():
     bpy.utils.register_module(__name__)
     bpy.types.TEXT_HT_header.prepend(draw_item)
-    bpy.types.TEXT_MT_toolbox.prepend(eval_menu_item)    
+     
 
 def unregister():
     bpy.utils.unregister_module(__name__)    
     bpy.types.TEXT_HT_header.remove(draw_item)
-    bpy.types.TEXT_MT_toolbox.remove(eval_menu_item)
+
     
 if __name__ == "__main__":
     register()
