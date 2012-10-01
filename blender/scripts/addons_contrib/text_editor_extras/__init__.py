@@ -40,12 +40,14 @@ if "bpy" in locals():
     imp.reload(text_editor_searchpydocs)
     imp.reload(text_editor_searchbpydocs)
     imp.reload(text_editor_searchblenderscripting)
+    imp.reload(text_editor_searchstackoverflow)
 else:
     from text_editor_extras import text_editor_chroma
     from text_editor_extras import text_editor_eval
     from text_editor_extras import text_editor_searchpydocs
     from text_editor_extras import text_editor_searchbpydocs
     from text_editor_extras import text_editor_searchblenderscripting
+    from text_editor_extras import text_editor_searchstackoverflow
 
 import bpy
 
@@ -70,7 +72,7 @@ class BasicTextMenu(bpy.types.Menu):
         layout.operator("txt.search_pydocs", text='Search Pydocs')
         layout.operator("txt.search_bpydocs", text='Search bpy docs')
         layout.operator("txt.search_blenderscripting", text='Search bscripting')
-
+        layout.operator("txt.search_stack", text='Search stack overflow')
 
 def has_selection(text):
     return not (text.select_end_line == text.current_line and \
