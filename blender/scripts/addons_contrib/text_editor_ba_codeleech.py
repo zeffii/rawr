@@ -100,7 +100,7 @@ class BACodeSnippets(bpy.types.Panel):
         layout = self.layout
         row = layout.row()
         scn = context.scene
-        self.layout.prop(scn, "ba_post_id")
+        layout.prop(scn, "ba_post_id")
         layout.operator("scene.download_codesnippet", text='Download to Text')
 
 
