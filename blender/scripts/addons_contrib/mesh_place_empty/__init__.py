@@ -72,12 +72,12 @@ def menu_func(self, context):
 
 
 def register():
-    bpy.utils.register_class(AddEmpties)
+    bpy.utils.register_module(__name__)
     bpy.types.INFO_MT_mesh_add.prepend(menu_func)
     
 
 def unregister():
-    bpy.utils.unregister_class(AddEmpties)
+    bpy.utils.unregister_module(__name__)
     bpy.types.INFO_MT_mesh_add.remove(menu_func)
 
 if __name__ == "__main__":

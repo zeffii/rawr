@@ -25,17 +25,6 @@ or go online at: http://www.gnu.org/licenses/ to view license options.
 END GPL LICENCE BLOCK
 """
 
-bl_info = {
-    "name": "BlenderArtists.org code leecher",
-    "author": "zeffii",
-    "version": (0, 2, 0),
-    "blender": (2, 6, 4),
-    "location": "Text Editor",
-    "description": "scrapes code object from data found at post link",
-    "wiki_url": "",
-    "tracker_url": "",
-    "category": "Text Editor"}
-
 import bpy
 
 def get_snippets(x, post_number):
@@ -104,22 +93,3 @@ class BACodeSnippets(bpy.types.Panel):
         layout.operator("scene.download_codesnippet", text='Download to Text')
 
 
-def AddBAVariables():
-    bpy.types.Scene.ba_post_id = bpy.props.StringProperty(
-        name = "Post ID",
-        description = "BA post ID containing desired snippet(s)",
-        default = ""
-    ) 
-
-
-def register():
-    AddBAVariables()
-    bpy.utils.register_module(__name__)
-
-
-def unregister():
-    bpy.utils.unregister_module(__name__)
-
-
-if __name__ == "__main__":
-    register()
