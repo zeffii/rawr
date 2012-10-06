@@ -137,16 +137,16 @@ def main(context, **kw):
     mrdoob = github + "mrdoob/three.js/tree/master/utils/exporters/blender/2.63/scripts/addons"
 
     dl_mapping = {
-        'dl_add_keymaps': zeffii + "/interface_add_keymaps",
-        'dl_add_vert': zeffii + "/add_mesh_vertex_object",
-        'dl_add_empty': zeffii + "/mesh_place_empty",
-        'dl_add_sum': zeffii + "/mesh_add_sum",
+        'dl_add_keymaps': zeffii + '/interface_add_keymaps',
+        'dl_add_vert': zeffii + '/add_mesh_vertex_object',
+        'dl_add_empty': zeffii + '/mesh_place_empty',
+        'dl_add_sum': zeffii + '/mesh_add_sum',
         'dl_add_searchutils': zeffii + '/text_editor_extras',
         'dl_gist_tools': zeffii + '/text_editor_gists',
         'dl_ba_leech': zeffii + '/text_editor_ba_leech',
         #'dl_extra_templates': zeffii + ,
-        'dl_syntax_from_text': zeffii + "/text_editor_syntax_pygments",
-        'dl_console_history_clean': zeffii + "/console_to_script_clean",
+        'dl_syntax_from_text': zeffii + '/text_editor_syntax_pygments',
+        'dl_console_history_clean': zeffii + '/console_to_script_clean',
         'dl_add_threejs': mrdoob + '/io_mesh_threejs'
     }
 
@@ -215,7 +215,7 @@ class PowerTools(Operator):
         )
 
     dl_console_history_clean = BoolProperty(
-        name="Add pygments plugin",
+        name="Console History (as clean script)",
         default=False,
         )
 

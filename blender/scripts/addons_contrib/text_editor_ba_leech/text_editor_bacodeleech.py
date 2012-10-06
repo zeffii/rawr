@@ -27,6 +27,14 @@ END GPL LICENCE BLOCK
 
 import bpy
 
+
+def unescape(s):
+    s = s.replace("&gt;", ">")
+    s = s.replace("&lt;", "<")
+    return s
+
+
+
 def get_snippets(x, post_number):
     import re
 
@@ -51,7 +59,8 @@ def get_snippets(x, post_number):
         big_string += snip
         big_string += "\n\n"
 
-    return big_string
+    # they arrive butchered by html escape, reverse escape!
+    return unescape(big_string)
 
 def get_x_and_post_number(link_to_post):
     from urllib.request import urlopen
@@ -72,6 +81,7 @@ class BASnippetOperator(bpy.types.Operator):
         link_to_post = context.scene.ba_post_id
         soft_data = get_x_and_post_number(link_to_post)
         text_data = get_snippets(*soft_data)
+
 
         text_name = soft_data[1]
         bpy.data.texts.new(text_name)
