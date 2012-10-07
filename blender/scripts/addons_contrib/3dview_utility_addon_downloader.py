@@ -66,81 +66,83 @@ from bpy.props import BoolProperty
 from bpy.types import Operator
 
 import os
-import re
 import shutil
+import json
 from urllib.request import urlopen
-from urllib.request import urlretrieve
+import base64
+
 
 def dl_main(main_url):
 
-    def make_raw(i):
-        removed = i.split('/')[5:]
-        chunks = ["https://raw.github.com", user_name, project, branch] 
-        raw_url = '/'.join(chunks + [i for i in removed])
-        return raw_url
+    def get_json_from_url(url):
+        """ get json from url and return in query-able form """
+        found_json = urlopen(url).readall().decode()
+        jfile = json.JSONDecoder()
+        return jfile.decode(found_json)
 
-    def get_details(main_url):
-        user_name, project, _, branch = main_url.split('/')[3:7]
-        directory = main_url.split('/')[-1]
-        return user_name, project, branch, directory
+    def get_dir_name():
+        """ the main url ends in the directory name, this returns it """
+        return main_url.rsplit('/')[-1]
 
-    def get_valid_urls(results):
-        urls = [make_raw(i) for i in results if user_name in i]
-        return [i for i in urls if not i.endswith(branch)]
+    def get_file_tree():
+        """ get the list of urls for the files contained in the directory """
+        get_b64str = lambda x: x.get('_links').get('self')
+        valid_file = lambda x: not x.get('name') == '__pycache__'
+        return [get_b64str(x) for x in wjson if valid_file(x)]
 
-    def write_directory(directory, urls):
+    def get_file(url):
+        """ get the bytes-object and file name from the url """
+        wjson = get_json_from_url(url)
+        file_name = wjson.get('name')
+        sb64 = wjson.get('content')
+        return base64.decodebytes(bytes(sb64, 'utf-8')), file_name
+
+    def write_file_from_url(url):
+        """ given a url to a base64 encoded file, writes the file to disk """
+        bytes_content, file_name = get_file(url)
+        with open(file_name, 'wb') as wfile:
+            wfile.write(bytes_content)
+
+    def write_directory():
+        """ make dir and call write_file_from_url() for each valid url """
         system_cwd = os.getcwd()
-        
+
         #basic assumption here, that the first path found is sufficient
-        working_dir = os.path.join(bpy.utils.script_paths()[0], "addons_contrib")
+        scripts_path = bpy.utils.script_paths()[0]
+        working_dir = os.path.join(scripts_path, "addons_contrib")
         os.chdir(working_dir)
-        print('current working directory: {}'.format(os.getcwd()))
 
         if os.path.exists(directory):
             shutil.rmtree(directory)
 
         os.mkdir(directory)
         os.chdir(directory)
-        print('current working directory: {}'.format(os.getcwd()))
 
         for url in urls:
-            file_name = url.split('/')[-1]
-            urlretrieve(url, file_name)            
+            write_file_from_url(url)        
 
         # restore, might not be needed.
         os.chdir(system_cwd)
 
-
-    user_name, project, branch, directory = get_details(main_url)
-
-    print('getting {}'.format(main_url))
-
-    p = urlopen(main_url)
-    x = p.read().decode('utf-8')
-
-    pattern = re.compile(r'<a href="(.*?\.[a-z]{2,3})"')
-    results = pattern.findall(x)
-    valid_urls = get_valid_urls(results)
-
-    for i in valid_urls:
-        print('downloading: ....', i[-40:])
-
-    write_directory(directory, valid_urls)
-    print('done!\n#####')
-
+    wjson = get_json_from_url(main_url)
+    directory = get_dir_name()
+    urls = get_file_tree()
+    write_directory()
+    print('done!')
 
 
 def main(context, **kw):
 
-    github = "https://github.com/"
-    zeffii = github + "zeffii/rawr/tree/master/blender/scripts/addons_contrib"
-    mrdoob = github + "mrdoob/three.js/tree/master/utils/exporters/blender/2.63/scripts/addons"
+    github = "https://api.github.com/repos/"
+    zeffii = github + "zeffii/rawr/contents/blender/scripts/addons_contrib"
+    mrdoob = github + "mrdoob/three.js/contents/utils/exporters/blender/2.63/scripts/addons"
+
 
     dl_mapping = {
         'dl_add_keymaps': zeffii + '/interface_add_keymaps',
         'dl_add_vert': zeffii + '/add_mesh_vertex_object',
         'dl_add_empty': zeffii + '/mesh_place_empty',
-        'dl_add_sum': zeffii + '/mesh_add_sum',
+        'dl_add_sum': zeffii + '/mesh_edge_sum',
         'dl_add_searchutils': zeffii + '/text_editor_extras',
         'dl_gist_tools': zeffii + '/text_editor_gists',
         'dl_ba_leech': zeffii + '/text_editor_ba_leech',
@@ -154,6 +156,7 @@ def main(context, **kw):
     for k, v in kw.items():
         if v:
             main_url = dl_mapping[k]
+            print('.....{}'.format(main_url[-40:]))
             dl_main(main_url)
 
     print('Finished')
