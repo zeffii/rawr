@@ -128,7 +128,7 @@ def dl_main(main_url):
     directory = get_dir_name()
     urls = get_file_tree()
     write_directory()
-    print('done!')
+    print(' : done!')
 
 
 def short_name(url):
@@ -160,10 +160,10 @@ def main(context, **kw):
     for k, v in kw.items():
         if v:
             main_url = dl_mapping[k]
-            print(short_name(main_url))
+            print(short_name(main_url), end=' ')
             dl_main(main_url)
 
-    print('Finished')
+    print('\nFinished')
 
 
 class PowerTools(Operator):
