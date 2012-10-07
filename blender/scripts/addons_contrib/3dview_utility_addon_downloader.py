@@ -72,6 +72,27 @@ from urllib.request import urlopen
 import base64
 
 
+github = "https://api.github.com/repos/"
+zeffii = github + "zeffii/rawr/contents/blender/scripts/addons_contrib"
+mrdoob = github + "mrdoob/three.js/contents/utils/exporters/blender/2.63/scripts/addons"
+
+powertools_constants = lambda: None
+powertools_constants.dl_mapping = {
+        'dl_add_keymaps': zeffii + '/interface_add_keymaps',
+        'dl_add_vert': zeffii + '/add_mesh_vertex_object',
+        'dl_add_empty': zeffii + '/mesh_place_empty',
+        'dl_add_sum': zeffii + '/mesh_edge_sum',
+        'dl_add_searchutils': zeffii + '/text_editor_extras',
+        'dl_gist_tools': zeffii + '/text_editor_gists',
+        'dl_ba_leech': zeffii + '/text_editor_ba_leech',
+        #'dl_extra_templates': zeffii + ,
+        'dl_syntax_from_text': zeffii + '/text_editor_syntax_pygments',
+        'dl_console_history_clean': zeffii + '/console_to_script_clean',
+        'dl_add_threejs': mrdoob + '/io_mesh_threejs'
+    }
+
+
+
 def dl_main(main_url):
 
     def get_json_from_url(url):
@@ -137,29 +158,10 @@ def short_name(url):
 
 def main(context, **kw):
 
-    github = "https://api.github.com/repos/"
-    zeffii = github + "zeffii/rawr/contents/blender/scripts/addons_contrib"
-    mrdoob = github + "mrdoob/three.js/contents/utils/exporters/blender/2.63/scripts/addons"
-
-
-    dl_mapping = {
-        'dl_add_keymaps': zeffii + '/interface_add_keymaps',
-        'dl_add_vert': zeffii + '/add_mesh_vertex_object',
-        'dl_add_empty': zeffii + '/mesh_place_empty',
-        'dl_add_sum': zeffii + '/mesh_edge_sum',
-        'dl_add_searchutils': zeffii + '/text_editor_extras',
-        'dl_gist_tools': zeffii + '/text_editor_gists',
-        'dl_ba_leech': zeffii + '/text_editor_ba_leech',
-        #'dl_extra_templates': zeffii + ,
-        'dl_syntax_from_text': zeffii + '/text_editor_syntax_pygments',
-        'dl_console_history_clean': zeffii + '/console_to_script_clean',
-        'dl_add_threejs': mrdoob + '/io_mesh_threejs'
-    }
-
     # if boolean switch is true, download from that url
     for k, v in kw.items():
         if v:
-            main_url = dl_mapping[k]
+            main_url = powertools_constants.dl_mapping[k]
             print(short_name(main_url), end=' ')
             dl_main(main_url)
 
@@ -234,7 +236,7 @@ class PowerTools(Operator):
 
     def invoke(self, context, event):
         wm = context.window_manager
-        return wm.invoke_props_dialog(self, width=200)
+        return wm.invoke_props_dialog(self, width=300)
 
 
     def draw(self, context):
@@ -265,7 +267,13 @@ class PowerTools(Operator):
             col.label(k)
             for option in v:
                 row = col.row()
-                row.prop(self, option)
+                
+                plugin_uri = powertools_constants.dl_mapping[option]
+                plugin_uri = plugin_uri.split('/')[-1]
+                if plugin_uri in bpy.context.user_preferences.addons.keys():
+                    row.prop(self, option, icon='OUTLINER_OB_LAMP')
+                else:
+                    row.prop(self, option, icon='OUTLINER_DATA_LAMP')
 
 
 
