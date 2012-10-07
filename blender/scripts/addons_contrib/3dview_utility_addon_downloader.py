@@ -131,6 +131,10 @@ def dl_main(main_url):
     print('done!')
 
 
+def short_name(url):
+    return '/'.join(url.rsplit('/',2)[-2:])
+
+
 def main(context, **kw):
 
     github = "https://api.github.com/repos/"
@@ -156,7 +160,7 @@ def main(context, **kw):
     for k, v in kw.items():
         if v:
             main_url = dl_mapping[k]
-            print('.....{}'.format(main_url[-40:]))
+            print(short_name(main_url))
             dl_main(main_url)
 
     print('Finished')
