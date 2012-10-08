@@ -92,6 +92,9 @@ powertools_constants.dl_mapping = {
     }
 
 
+def nice_format(input_string):
+    return input_string.replace('_', ' ').title()
+
 
 def dl_main(main_url):
 
@@ -236,7 +239,7 @@ class PowerTools(Operator):
 
     def invoke(self, context, event):
         wm = context.window_manager
-        return wm.invoke_props_dialog(self, width=300)
+        return wm.invoke_props_dialog(self, width=250)
 
 
     def draw(self, context):
@@ -267,15 +270,20 @@ class PowerTools(Operator):
             col.label(k)
             for option in v:
                 row = col.row()
-                
+                split = row.split(percentage=0.25)
+                col_int = split.column()
+
                 plugin_uri = powertools_constants.dl_mapping[option]
                 plugin_uri = plugin_uri.split('/')[-1]
+
                 if plugin_uri in bpy.context.user_preferences.addons.keys():
-                    row.prop(self, option, icon='OUTLINER_OB_LAMP')
+                    col_int.prop(self, option, icon='FILE_TICK', text="")
                 else:
-                    row.prop(self, option, icon='OUTLINER_DATA_LAMP')
+                    col_int.prop(self, option, icon='URL', text="")
 
-
+                split = split.split()
+                col_int = split.column()
+                col_int.label(nice_format(plugin_uri))
 
 
 def menu_func(self, context):
