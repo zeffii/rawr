@@ -159,6 +159,12 @@ def short_name(url):
     return '/'.join(url.rsplit('/',2)[-2:])
 
 
+def directory_exists(dir_to_check):
+    scripts_path = bpy.utils.script_paths()[0]
+    dir_path_to_check = os.path.join(scripts_path, "addons_contrib", dir_to_check)
+    return True if os.path.exists(dir_path_to_check) else False
+
+
 def main(context, **kw):
 
     # if boolean switch is true, download from that url
@@ -278,6 +284,8 @@ class PowerTools(Operator):
 
                 if plugin_uri in bpy.context.user_preferences.addons.keys():
                     col_int.prop(self, option, icon='FILE_TICK', text="")
+                elif directory_exists(plugin_uri):
+                    col_int.prop(self, option, icon='FILE_FOLDER', text="")
                 else:
                     col_int.prop(self, option, icon='URL', text="")
 
