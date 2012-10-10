@@ -35,29 +35,14 @@ bl_info = {
 
 
 """
-
 - text editor tools -
-[x] Add download buttons, based on list
-[x] Search Utils 
-[x] Gist Tools 
-[x] Ba Leech tool 
+[ ] Add download buttons, based on list
 [ ] Color Picker
 [ ] Extra templates
-[x] add syntax objects from text
 
 - 3d view tools
-[x] add 3dview keymap button
-[x] add object vertex at cursor
-[x] add empty at selected
-[x] measure selected edges
-
 - console
-[x] copy cleaned history
-
 - external
-[x] threejs leecher
-
-
 """
 
 
@@ -77,19 +62,26 @@ zeffii = github + "zeffii/rawr/contents/blender/scripts/addons_contrib"
 mrdoob = github + "mrdoob/three.js/contents/utils/exporters/blender/2.63/scripts/addons"
 
 powertools_constants = lambda: None
+powertools_constants.prefixes = {
+    'v3d': "3d View tools",
+    'text': "Text Editor",
+    'term': "Console",
+    'xt': "External Utils"
+
+}
+
 powertools_constants.dl_mapping = {
-        'dl_add_keymaps': zeffii + '/interface_add_keymaps',
-        'dl_add_vert': zeffii + '/add_mesh_vertex_object',
-        'dl_add_empty': zeffii + '/mesh_place_empty',
-        'dl_add_sum': zeffii + '/mesh_edge_sum',
-        'dl_add_searchutils': zeffii + '/text_editor_extras',
-        'dl_gist_tools': zeffii + '/text_editor_gists',
-        'dl_ba_leech': zeffii + '/text_editor_ba_leech',
-        #'dl_extra_templates': zeffii + ,
-        'dl_syntax_from_text': zeffii + '/text_editor_syntax_pygments',
-        'dl_console_history_clean': zeffii + '/console_to_script_clean',
-        'dl_add_threejs': mrdoob + '/io_mesh_threejs'
-    }
+    'v3d_dl_add_keymaps': zeffii + '/interface_add_keymaps',
+    'v3d_dl_add_vert': zeffii + '/add_mesh_vertex_object',
+    'v3d_dl_add_empty': zeffii + '/mesh_place_empty',
+    'v3d_dl_add_sum': zeffii + '/mesh_edge_sum',
+    'text_dl_add_searchutils': zeffii + '/text_editor_extras',
+    'text_dl_gist_tools': zeffii + '/text_editor_gists',
+    'text_dl_ba_leech': zeffii + '/text_editor_ba_leech',
+    'text_dl_syntax_from_text': zeffii + '/text_editor_syntax_pygments',
+    'term_dl_console_history_clean': zeffii + '/console_to_script_clean',
+    'xt_dl_add_threejs': mrdoob + '/io_mesh_threejs'
+}
 
 
 def nice_format(input_string):
@@ -185,12 +177,11 @@ class PowerTools(Operator):
     bl_label = "Power Tools Download Bay"
 
 
-    for k in powertools_constants.dl_mapping:
+    for k, v in powertools_constants.dl_mapping.items():
         exec("""{} = BoolProperty(
-            name="",
-            default=False,
-        )\n\n""".format(k))
-
+        name="",
+        default=False,
+    )\n\n""".format(k))
 
     def execute(self, context):
         keywords = self.as_keywords()
@@ -200,36 +191,29 @@ class PowerTools(Operator):
 
     def invoke(self, context, event):
         wm = context.window_manager
-        return wm.invoke_props_dialog(self, width=250)
+        return wm.invoke_props_dialog(self, width=250, height=600)
 
 
     def draw(self, context):
         layout = self.layout
-        
-        # will do:  console_history_using_copy_as_script.py
 
-        dl_options = {  
-            "3d View tools": [  "dl_add_keymaps", 
-                                "dl_add_vert", 
-                                "dl_add_empty", 
-                                "dl_add_sum"],
-
-            "Text Editor": [    "dl_add_searchutils", 
-                                "dl_gist_tools", 
-                                "dl_ba_leech", 
-                                #"dl_extra_templates", 
-                                "dl_syntax_from_text"],
-
-            "Console": ["dl_console_history_clean"],
-
-            "External Utils": ["dl_add_threejs"]
-        }
-
-        for k, v in dl_options.items():
+        # form   k= '3dv', v="3d View tools"
+        for k, v in powertools_constants.prefixes.items():
             box = layout.box()
             col = box.column()
-            col.label(k)
-            for option in v:
+            col.label(v)
+        
+            # dl_mappings
+            # '3dv_dl_add_keymaps': zeffii + '/interface_add_keymaps',
+            plugs_found = [i for i in powertools_constants.dl_mapping.keys() \
+                                if i.startswith(k)]
+
+            print('----')
+            print(v)
+            print(plugs_found)
+
+            for option in plugs_found:
+
                 row = col.row()
                 split = row.split(percentage=0.25)
                 col_int = split.column()
@@ -237,9 +221,13 @@ class PowerTools(Operator):
                 plugin_uri = powertools_constants.dl_mapping[option]
                 plugin_uri = plugin_uri.split('/')[-1]
 
+                DIR_EXISTS = directory_exists(plugin_uri)
                 if plugin_uri in bpy.context.user_preferences.addons.keys():
-                    col_int.prop(self, option, icon='FILE_TICK', text="")
-                elif directory_exists(plugin_uri):
+                    if DIR_EXISTS:
+                        col_int.prop(self, option, icon='FILE_TICK', text="")
+                    else:
+                        col_int.prop(self, option, icon='X_VEC', text="")
+                elif DIR_EXISTS:
                     col_int.prop(self, option, icon='FILE_FOLDER', text="")
                 else:
                     col_int.prop(self, option, icon='URL', text="")
