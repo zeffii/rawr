@@ -148,6 +148,9 @@ def dl_main(main_url):
         # restore, might not be needed.
         os.chdir(system_cwd)
 
+        # this enables directly after download.
+        bpy.ops.wm.addon_enable(module=main_url.split('/')[-1])
+
     wjson = get_json_from_url(main_url)
     directory = get_dir_name()
     urls = get_file_tree()
@@ -182,60 +185,12 @@ class PowerTools(Operator):
     bl_label = "Power Tools Download Bay"
 
 
-    dl_add_keymaps = BoolProperty(
-        name="Add Keymaps",
-        default=True,
-        )
+    for k in powertools_constants.dl_mapping:
+        exec("""{} = BoolProperty(
+            name="",
+            default=False,
+        )\n\n""".format(k))
 
-    dl_add_vert = BoolProperty(
-        name="Add Vert",
-        default=False,
-        )
-
-    dl_add_empty = BoolProperty(
-        name="Add Empty",
-        default=True,
-        )
-
-    dl_add_sum = BoolProperty(
-        name="Add Sum",
-        default=False,
-        )
-
-    dl_add_searchutils = BoolProperty(
-        name="Add Searchutils",
-        default=True,
-        )
-
-    dl_gist_tools = BoolProperty(
-        name="Gist Tools",
-        default=True,
-        )
-
-    dl_ba_leech = BoolProperty(
-        name="Ba Leech",
-        default=False,
-        )
-
-    # dl_extra_templates = BoolProperty(
-    #     name="Extra Templates",
-    #     default=True,
-    #     )
-
-    dl_syntax_from_text = BoolProperty(
-        name="Syntax From Text",
-        default=False,
-        )
-
-    dl_add_threejs = BoolProperty(
-        name="Add Threejs",
-        default=False,
-        )
-
-    dl_console_history_clean = BoolProperty(
-        name="Console History (as clean script)",
-        default=False,
-        )
 
     def execute(self, context):
         keywords = self.as_keywords()
