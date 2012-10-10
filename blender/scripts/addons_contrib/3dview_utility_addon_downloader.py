@@ -197,20 +197,13 @@ class PowerTools(Operator):
     def draw(self, context):
         layout = self.layout
 
-        # form   k= '3dv', v="3d View tools"
         for k, v in powertools_constants.prefixes.items():
             box = layout.box()
             col = box.column()
             col.label(v)
-        
-            # dl_mappings
-            # '3dv_dl_add_keymaps': zeffii + '/interface_add_keymaps',
+
             plugs_found = [i for i in powertools_constants.dl_mapping.keys() \
                                 if i.startswith(k)]
-
-            print('----')
-            print(v)
-            print(plugs_found)
 
             for option in plugs_found:
 
