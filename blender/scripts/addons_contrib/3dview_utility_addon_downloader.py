@@ -33,10 +33,8 @@ bl_info = {
     "category": "Addon Installer"}
 
 
-
 """
 - text editor tools -
-[ ] Add download buttons, based on list
 [ ] Color Picker
 [ ] Extra templates
 
@@ -59,7 +57,8 @@ import base64
 
 github = "https://api.github.com/repos/"
 zeffii = github + "zeffii/rawr/contents/blender/scripts/addons_contrib"
-mrdoob = github + "mrdoob/three.js/contents/utils/exporters/blender/2.63/scripts/addons"
+mrdoob_utils = "mrdoob/three.js/contents/utils/"
+mrdoob = github + mrdoob_utils + "exporters/blender/2.63/scripts/addons"
 
 powertools_constants = lambda: None
 powertools_constants.prefixes = {
@@ -91,36 +90,48 @@ def nice_format(input_string):
 def dl_main(main_url):
 
     def get_json_from_url(url):
-        """ get json from url and return in query-able form """
+        '''
+        get json from url and return in query-able form
+        '''
         found_json = urlopen(url).readall().decode()
         jfile = json.JSONDecoder()
         return jfile.decode(found_json)
 
     def get_dir_name():
-        """ the main url ends in the directory name, this returns it """
+        '''
+        the main url ends in the directory name, this returns it
+        '''
         return main_url.rsplit('/')[-1]
 
     def get_file_tree():
-        """ get the list of urls for the files contained in the directory """
+        '''
+        get the list of urls for the files contained in the directory
+        '''
         get_b64str = lambda x: x.get('_links').get('self')
         valid_file = lambda x: not x.get('name') == '__pycache__'
         return [get_b64str(x) for x in wjson if valid_file(x)]
 
     def get_file(url):
-        """ get the bytes-object and file name from the url """
+        '''
+        get the bytes-object and file name from the url
+        '''
         wjson = get_json_from_url(url)
         file_name = wjson.get('name')
         sb64 = wjson.get('content')
         return base64.decodebytes(bytes(sb64, 'utf-8')), file_name
 
     def write_file_from_url(url):
-        """ given a url to a base64 encoded file, writes the file to disk """
+        '''
+        given a url to a base64 encoded file, writes the file to disk
+        '''
         bytes_content, file_name = get_file(url)
         with open(file_name, 'wb') as wfile:
             wfile.write(bytes_content)
 
     def write_directory():
-        """ make dir and call write_file_from_url() for each valid url """
+        '''
+        make dir and call write_file_from_url() for each valid url
+        '''
         system_cwd = os.getcwd()
 
         #basic assumption here, that the first path found is sufficient
@@ -135,7 +146,7 @@ def dl_main(main_url):
         os.chdir(directory)
 
         for url in urls:
-            write_file_from_url(url)        
+            write_file_from_url(url)
 
         # restore, might not be needed.
         os.chdir(system_cwd)
@@ -151,13 +162,13 @@ def dl_main(main_url):
 
 
 def short_name(url):
-    return '/'.join(url.rsplit('/',2)[-2:])
+    return '/'.join(url.rsplit('/', 2)[-2:])
 
 
 def directory_exists(dir_to_check):
     scripts_path = bpy.utils.script_paths()[0]
-    dir_path_to_check = os.path.join(scripts_path, "addons_contrib", dir_to_check)
-    return True if os.path.exists(dir_path_to_check) else False
+    path_to_check = os.path.join(scripts_path, "addons_contrib", dir_to_check)
+    return True if os.path.exists(path_to_check) else False
 
 
 def main(context, **kw):
@@ -176,23 +187,48 @@ class PowerTools(Operator):
     bl_idname = "scene.add_power_tools"
     bl_label = "Power Tools Download Bay"
 
-
     for k, v in powertools_constants.dl_mapping.items():
-        exec("""{} = BoolProperty(
-        name="",
-        default=False,
-    )\n\n""".format(k))
+        exec("""{} = BoolProperty()\n\n""".format(k))
 
     def execute(self, context):
         keywords = self.as_keywords()
         main(context, **keywords)
         return {'FINISHED'}
 
-
     def invoke(self, context, event):
         wm = context.window_manager
-        return wm.invoke_props_dialog(self, width=250, height=600)
+        return wm.invoke_props_dialog(self, width=250)
 
+    def get_plugin_uri(self, option):
+        plugin_uri = powertools_constants.dl_mapping[option]
+        return plugin_uri.split('/')[-1]
+
+    def registered(self, plugin_uri):
+        return plugin_uri in bpy.context.user_preferences.addons.keys()
+
+    def set_icon(self, plugin_uri):
+        _registered = self.registered(plugin_uri)
+        if directory_exists(plugin_uri):
+            self.icon = 'FILE_TICK' if _registered else 'FILE_FOLDER'
+        elif plugin_uri is _registered:
+            self.icon = 'X_VEC'
+        else:
+            self.icon = 'URL'
+
+    def draw_category_member(self, context, col, option):
+
+        layout = self.layout
+        row = col.row()
+        split = row.split(percentage=0.25)
+        col_int = split.column()
+
+        plugin_uri = self.get_plugin_uri(option)
+        self.set_icon(plugin_uri)
+
+        col_int.prop(self, option, icon=self.icon, text="")
+        split = split.split()
+        col_int = split.column()
+        col_int.label(nice_format(plugin_uri))
 
     def draw(self, context):
         layout = self.layout
@@ -202,32 +238,11 @@ class PowerTools(Operator):
             col = box.column()
             col.label(v)
 
-            plugs_found = [i for i in powertools_constants.dl_mapping.keys() \
-                                if i.startswith(k)]
+            categories = powertools_constants.dl_mapping.keys()
+            plugs_found = [i for i in  categories if i.startswith(k)]
 
             for option in plugs_found:
-
-                row = col.row()
-                split = row.split(percentage=0.25)
-                col_int = split.column()
-
-                plugin_uri = powertools_constants.dl_mapping[option]
-                plugin_uri = plugin_uri.split('/')[-1]
-
-                DIR_EXISTS = directory_exists(plugin_uri)
-                if plugin_uri in bpy.context.user_preferences.addons.keys():
-                    if DIR_EXISTS:
-                        col_int.prop(self, option, icon='FILE_TICK', text="")
-                    else:
-                        col_int.prop(self, option, icon='X_VEC', text="")
-                elif DIR_EXISTS:
-                    col_int.prop(self, option, icon='FILE_FOLDER', text="")
-                else:
-                    col_int.prop(self, option, icon='URL', text="")
-
-                split = split.split()
-                col_int = split.column()
-                col_int.label(nice_format(plugin_uri))
+                self.draw_category_member(context, col, option)
 
 
 def menu_func(self, context):
