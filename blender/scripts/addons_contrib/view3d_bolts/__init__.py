@@ -22,12 +22,12 @@
 # ***** END GPL LICENCE BLOCK *****
 
 bl_info = {
-    "name": "Edge sum",
+    "name": "conveniences for 3dview",
     "author": "zeffii",
     "version": (0, 1, 0),
     "blender": (2, 6, 1),
     "location": "3d view, N panel",
-    "description": "Adds edge sum box to Mesh Display.",
+    "description": "Adds features to various toolbars.",
     "wiki_url": "",
     "tracker_url": "",
     "category": "3D View"}
@@ -93,15 +93,25 @@ def initSceneProperties(scn):
     scn['my_string'] = ""
     return
 
+def draw_item(self, context):
+    layout = self.layout
+    obj = context.object
+    row = layout.row()
+
+    if obj:
+        row.operator("view3d.snap_cursor_to_selected", text='Snap to selected')
+
 
 def register():
     initSceneProperties(bpy.context.scene)
     bpy.utils.register_module(__name__)
+    bpy.types.VIEW3D_PT_view3d_cursor.append(draw_item)
     bpy.types.VIEW3D_PT_view3d_meshdisplay.append(draw_item)
 
 def unregister():
     bpy.utils.unregister_module(__name__)
     bpy.types.VIEW3D_PT_view3d_meshdisplay.remove(draw_item)
+    bpy.types.VIEW3D_PT_view3d_cursor.remove(draw_item)
 
 if __name__ == "__main__":
     register()

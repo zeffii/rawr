@@ -66,14 +66,12 @@ powertools_constants.prefixes = {
     'text': "Text Editor",
     'term': "Console",
     'xt': "External Utils"
-
 }
-
 powertools_constants.dl_mapping = {
     'v3d_dl_add_keymaps': zeffii + '/interface_add_keymaps',
     'v3d_dl_add_vert': zeffii + '/add_mesh_vertex_object',
     'v3d_dl_add_empty': zeffii + '/mesh_place_empty',
-    'v3d_dl_add_sum': zeffii + '/mesh_edge_sum',
+    'v3d_dl_view3d_bolts': zeffii + '/view3d_bolts',
     'text_dl_add_searchutils': zeffii + '/text_editor_extras',
     'text_dl_gist_tools': zeffii + '/text_editor_gists',
     'text_dl_ba_leech': zeffii + '/text_editor_ba_leech',
@@ -201,48 +199,53 @@ class PowerTools(Operator):
 
     def get_plugin_uri(self, option):
         plugin_uri = powertools_constants.dl_mapping[option]
-        return plugin_uri.split('/')[-1]
+        self.plugin_uri = plugin_uri.split('/')[-1]
 
     def registered(self, plugin_uri):
         return plugin_uri in bpy.context.user_preferences.addons.keys()
 
-    def set_icon(self, plugin_uri):
-        _registered = self.registered(plugin_uri)
-        if directory_exists(plugin_uri):
+    def set_icon(self):
+        _registered = self.registered(self.plugin_uri)
+        if directory_exists(self.plugin_uri):
             self.icon = 'FILE_TICK' if _registered else 'FILE_FOLDER'
-        elif plugin_uri is _registered:
+        elif self.plugin_uri is _registered:
             self.icon = 'X_VEC'
         else:
             self.icon = 'URL'
 
     def draw_category_member(self, context, col, option):
+        self.get_plugin_uri(option)
+        self.set_icon()
 
         layout = self.layout
         row = col.row()
         split = row.split(percentage=0.25)
         col_int = split.column()
 
-        plugin_uri = self.get_plugin_uri(option)
-        self.set_icon(plugin_uri)
-
         col_int.prop(self, option, icon=self.icon, text="")
         split = split.split()
         col_int = split.column()
-        col_int.label(nice_format(plugin_uri))
+        col_int.label(nice_format(self.plugin_uri))
+
+    def plugins_of_this_type(self, k):
+        categories = powertools_constants.dl_mapping.keys()
+        return [i for i in  categories if i.startswith(k)]
+
+    def draw_category(self, context, k, v):
+        box = layout.box()
+        col = box.column()
+        col.label(v)
+
+        for option in self.plugins_of_this_type(k):
+            self.draw_category_member(context, col, option)
+
 
     def draw(self, context):
         layout = self.layout
 
         for k, v in powertools_constants.prefixes.items():
-            box = layout.box()
-            col = box.column()
-            col.label(v)
-
-            categories = powertools_constants.dl_mapping.keys()
-            plugs_found = [i for i in  categories if i.startswith(k)]
-
-            for option in plugs_found:
-                self.draw_category_member(context, col, option)
+            print(vars())
+            self.draw_category(self, context, k, v, layout)
 
 
 def menu_func(self, context):
