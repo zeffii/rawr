@@ -93,7 +93,7 @@ def initSceneProperties(scn):
     scn['my_string'] = ""
     return
 
-def draw_item(self, context):
+def draw_item_2(self, context):
     layout = self.layout
     obj = context.object
     row = layout.row()
@@ -105,13 +105,13 @@ def draw_item(self, context):
 def register():
     initSceneProperties(bpy.context.scene)
     bpy.utils.register_module(__name__)
-    bpy.types.VIEW3D_PT_view3d_cursor.append(draw_item)
+    bpy.types.VIEW3D_PT_view3d_cursor.append(draw_item_2)
     bpy.types.VIEW3D_PT_view3d_meshdisplay.append(draw_item)
 
 def unregister():
     bpy.utils.unregister_module(__name__)
+    bpy.types.VIEW3D_PT_view3d_cursor.remove(draw_item_2)
     bpy.types.VIEW3D_PT_view3d_meshdisplay.remove(draw_item)
-    bpy.types.VIEW3D_PT_view3d_cursor.remove(draw_item)
 
 if __name__ == "__main__":
     register()
