@@ -92,8 +92,7 @@ def dl_main(main_url):
         get json from url and return in query-able form
         '''
         found_json = urlopen(url).readall().decode()
-        jfile = json.JSONDecoder()
-        return jfile.decode(found_json)
+        return json.JSONDecoder().decode(found_json)
 
     def get_dir_name():
         '''
@@ -114,8 +113,7 @@ def dl_main(main_url):
         get the bytes-object and file name from the url
         '''
         wjson = get_json_from_url(url)
-        file_name = wjson.get('name')
-        sb64 = wjson.get('content')
+        sb64, file_name = wjson.get('content'), wjson.get('name')
         return base64.decodebytes(bytes(sb64, 'utf-8')), file_name
 
     def write_file_from_url(url):
@@ -126,6 +124,16 @@ def dl_main(main_url):
         with open(file_name, 'wb') as wfile:
             wfile.write(bytes_content)
 
+    def prepare_directory(working_dir):
+        os.chdir(working_dir)
+        if os.path.exists(directory):
+            shutil.rmtree(directory)
+        os.mkdir(directory)
+        os.chdir(directory)
+
+    def restore_state(system_cwd):
+        os.chdir(system_cwd)
+        
     def write_directory():
         '''
         make dir and call write_file_from_url() for each valid url
@@ -135,22 +143,13 @@ def dl_main(main_url):
         #basic assumption here, that the first path found is sufficient
         scripts_path = bpy.utils.script_paths()[0]
         working_dir = os.path.join(scripts_path, "addons_contrib")
-        os.chdir(working_dir)
-
-        if os.path.exists(directory):
-            shutil.rmtree(directory)
-
-        os.mkdir(directory)
-        os.chdir(directory)
-
+        
+        prepare_directory(working_dir)
         for url in urls:
             write_file_from_url(url)
 
-        # restore, might not be needed.
-        os.chdir(system_cwd)
+        restore_state(system_cwd)
 
-        # this enables directly after download.
-        bpy.ops.wm.addon_enable(module=main_url.split('/')[-1])
 
     wjson = get_json_from_url(main_url)
     directory = get_dir_name()
@@ -172,11 +171,19 @@ def directory_exists(dir_to_check):
 def main(context, **kw):
 
     # if boolean switch is true, download from that url
+    enable_flag = dict(kw.items())['enable_only']
+    mapping = powertools_constants.dl_mapping
+
     for k, v in kw.items():
-        if v:
-            main_url = powertools_constants.dl_mapping[k]
+        if v and (k in mapping):
+            main_url = mapping[k]
             print(short_name(main_url), end=' ')
-            dl_main(main_url)
+            if not enable_flag:
+                
+                dl_main(main_url)
+
+            print('enabling {}'.format(k))
+            bpy.ops.wm.addon_enable(module=main_url.split('/')[-1])
 
     print('\nFinished')
 
@@ -186,7 +193,9 @@ class PowerTools(Operator):
     bl_label = "Power Tools Download Bay"
 
     for k, v in powertools_constants.dl_mapping.items():
-        exec("""{} = BoolProperty()\n\n""".format(k))
+        exec("""{} = BoolProperty(name="")\n\n""".format(k))
+
+    enable_only = BoolProperty()
 
     def execute(self, context):
         keywords = self.as_keywords()
@@ -217,12 +226,14 @@ class PowerTools(Operator):
         self.get_plugin_uri(option)
         self.set_icon()
 
+        # draw button quarter width
         layout = self.layout
         row = col.row()
         split = row.split(percentage=0.25)
         col_int = split.column()
+        col_int.prop(self, option, icon=self.icon)
 
-        col_int.prop(self, option, icon=self.icon, text="")
+        # use the other .75 by taking the split() of the current split
         split = split.split()
         col_int = split.column()
         col_int.label(nice_format(self.plugin_uri))
@@ -231,7 +242,7 @@ class PowerTools(Operator):
         categories = powertools_constants.dl_mapping.keys()
         return [i for i in  categories if i.startswith(k)]
 
-    def draw_category(self, context, k, v):
+    def draw_category(self, context, k, v, layout):
         box = layout.box()
         col = box.column()
         col.label(v)
@@ -239,14 +250,13 @@ class PowerTools(Operator):
         for option in self.plugins_of_this_type(k):
             self.draw_category_member(context, col, option)
 
-
     def draw(self, context):
         layout = self.layout
 
         for k, v in powertools_constants.prefixes.items():
-            print(vars())
-            self.draw_category(self, context, k, v, layout)
+            self.draw_category(context, k, v, layout)
 
+        layout.prop(self, 'enable_only', text="enable only")
 
 def menu_func(self, context):
     layout = self.layout
