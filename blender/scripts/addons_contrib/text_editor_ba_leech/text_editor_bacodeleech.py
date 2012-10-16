@@ -29,8 +29,11 @@ import bpy
 
 
 def unescape(s):
+    print(repr(s))
     s = s.replace("&gt;", ">")
     s = s.replace("&lt;", "<")
+    s = s.replace("&quot;", '\"')
+    s = s.replace('\r\n', '\n')
     return s
 
 
