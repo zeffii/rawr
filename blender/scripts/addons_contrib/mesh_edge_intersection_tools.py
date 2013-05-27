@@ -8,7 +8,7 @@ of the License, or (at your option) any later version.
 
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	See the
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.    See the
 GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
@@ -22,28 +22,27 @@ bl_info = {
     "name": "Edge tools : tinyCAD VTX",
     "author": "zeffii",
     "version": (0, 5, 1),
-    "blender": (2, 5, 6),
+    "blender": (2, 56, 0),
     "category": "Mesh",
     "location": "View3D > EditMode > (w) Specials",
-    "warning": "Still under development",
+    "warning": "will detach geometry",
     "wiki_url": "http://wiki.blender.org/index.php/"\
-        "Extensions:2.5/Py/Scripts/Modeling/Edge_Slice",
+        "Extensions:2.6/Py/Scripts/Modeling/Edge_Slice",
     "tracker_url": "http://projects.blender.org/tracker/"\
         "?func=detail&aid=25227"
    }
 
-'''
+"""
 parts based on Keith (Wahooney) Boshoff, cursor to intersection script and
 Paul Bourke's Shortest Line Between 2 lines, and thanks to PKHG from BA.org
 for attempting to explain things to me that i'm not familiar with.
-TODO: [ ] allow multi selection ( > 2 ) for Slice/Weld intersection mode
 TODO: [ ] streamline this code !
 
 1) Edge Extend To Edge ( T )
 2) Edge Slice Intersecting ( X )
 3) Edge Project Converging  ( V )
 
-'''
+"""
 
 import bpy
 import sys
@@ -214,9 +213,7 @@ def getVertEdgeCount():
 
 def runCleanUp():
     bpy.ops.object.mode_set(mode='EDIT')
-    bpy.ops.mesh.select_all(action='TOGGLE')
-    bpy.ops.mesh.select_all(action='TOGGLE')
-    bpy.ops.mesh.remove_doubles(mergedist=VTX_PRECISION)
+    bpy.ops.mesh.remove_doubles(threshold=VTX_PRECISION, use_unselected=False)
     bpy.ops.mesh.select_all(action='TOGGLE') #unselect all
 
 
@@ -289,7 +286,7 @@ def initScriptX(context, self):
 
 
 class EdgeIntersections(bpy.types.Operator):
-    '''Makes a weld/slice/extend to intersecting edges/lines'''
+    """Makes a weld/slice/extend to intersecting edges/lines"""
     bl_idname = 'mesh.intersections'
     bl_label = 'Edge tools : tinyCAD VTX'
     # bl_options = {'REGISTER', 'UNDO'}
