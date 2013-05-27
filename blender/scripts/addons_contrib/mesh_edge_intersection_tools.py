@@ -74,14 +74,14 @@ def CountPointOnEdges(point, outer_points):
 
 #   takes Vector List and returns tuple of points in expected order. 
 def edges_to_points(edges):
-    (vp1, vp2) = (Vector((edges[0][0])), Vector((edges[0][1])))
-    (vp3, vp4) = (Vector((edges[1][0])), Vector((edges[1][1])))
-    return (vp1,vp2,vp3,vp4)
+    vp1, vp2 = (Vector((edges[0][0])), Vector((edges[0][1])))
+    vp3, vp4 = (Vector((edges[1][0])), Vector((edges[1][1])))
+    return vp1,vp2,vp3,vp4
 
 
 #   takes a list of 4 vectors and returns True or False depending on checks
 def checkIsMatrixCoplanar(verti):
-    (v1, v2, v3, v4) = edges_to_points(verti)   #unpack
+    v1, v2, v3, v4 = edges_to_points(verti)   #unpack
     shortest_line = LineIntersect(v1, v2, v3, v4)
     if mDist(shortest_line[1], shortest_line[0]) > VTX_PRECISION: return False
     else: return True
@@ -89,7 +89,7 @@ def checkIsMatrixCoplanar(verti):
 
 #   point = the halfway mark on the shortlest line between two lines
 def checkEdges(Edge, obj):
-    (p1, p2, p3, p4) = edges_to_points(Edge)
+    p1, p2, p3, p4 = edges_to_points(Edge)
     line = LineIntersect(p1, p2, p3, p4)
     point = ((line[0] + line[1]) / 2) # or point = line[0]
     return point
@@ -103,7 +103,7 @@ def GetActiveObject():
 
     bpy.ops.object.mode_set(mode='OBJECT') # to be sure.
     o = bpy.context.active_object
-    return (o, vert_num, edge_num)
+    return o, vert_num, edge_num
 
 
 def AddVertsToObject(vert_count, o, mvX, mvA, mvB, mvC, mvD):
@@ -115,8 +115,8 @@ def AddVertsToObject(vert_count, o, mvX, mvA, mvB, mvC, mvD):
 
 #   Used when the user chooses to slice/Weld, vX is intersection point
 def makeGeometryWeld(vX,outer_points):
-    (o, vert_count, edge_count) =  GetActiveObject()
-    (vA, vB, vC, vD) =  edges_to_points(outer_points)
+    o, vert_count, edge_count =  GetActiveObject()
+    vA, vB, vC, vD =  edges_to_points(outer_points)
     AddVertsToObject(vert_count, o, vA, vX, vB, vC, vD) # o is the object
 
     oe = o.data.edges
@@ -129,8 +129,8 @@ def makeGeometryWeld(vX,outer_points):
 
 #   Used for extending an edge to a point on another edge.
 def ExtendEdge(vX, outer_points, count):
-    (o, vert_count, edge_count) =  GetActiveObject()
-    (vA, vB, vC, vD) =  edges_to_points(outer_points)
+    o, vert_count, edge_count =  GetActiveObject()
+    vA, vB, vC, vD =  edges_to_points(outer_points)
     AddVertsToObject(vert_count, o, vX, vA, vB, vC, vD)
 
     oe = o.data.edges
@@ -187,7 +187,7 @@ def getMeshMatrix(obj):
     if is_editmode:
         bpy.ops.object.mode_set(mode='OBJECT')
 
-    (edges, meshMatrix) = ([],[])
+    edges, meshMatrix = [],[]
     mesh = obj.data
     verts = mesh.vertices
     for e in mesh.edges:
@@ -220,7 +220,7 @@ def runCleanUp():
 def initScriptV(context, self):
     obj = bpy.context.active_object
     meshMatrix = getMeshMatrix(obj)
-    (vert_count, edge_count) = getVertEdgeCount()
+    vert_count, edge_count = getVertEdgeCount()
 
     #need 2 edges to be of any use.
     if len(meshMatrix) < 2: 
