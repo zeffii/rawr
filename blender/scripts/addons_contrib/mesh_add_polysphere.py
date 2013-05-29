@@ -111,7 +111,7 @@ def create_mesh_object(context, verts, edges, faces, name):
 
 
 
-class AddSpringObject(bpy.types.Operator):
+class AddPolySphere(bpy.types.Operator):
 
     bl_idname = "mesh.polysphere_add"
     bl_label = "Add PolySphere"
