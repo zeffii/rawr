@@ -129,7 +129,7 @@ class AddPolySphere(bpy.types.Operator):
         description="Distance from center to surface",
         default=1.0, min=0.01, max=10.0)
 
-    # control much to spherize the cube
+    # control how much to spherize the cube
     sphere_factor = FloatProperty(name="sphere factor",
         description="factor by which to spherize",
         default=1.0, min=0.0, max=1.0)
