@@ -115,7 +115,7 @@ class AddPolySphere(bpy.types.Operator):
 
     bl_idname = "mesh.polysphere_add"
     bl_label = "Add PolySphere"
-    bl_options = {'REGISTER', 'UNDO', 'PRESET'}
+    bl_options = {'REGISTER', 'UNDO'}
 
     # the max here is arbitrary, and is to avoid accidentally 
     # setting too high for CPU.
@@ -135,9 +135,18 @@ class AddPolySphere(bpy.types.Operator):
         default=1.0, min=0.0, max=1.0)
 
     def execute(self, context):
+
+        # (hack)
+        # this removes the existing mesh data, when user adjusts slider
+        if context.object:
+            bpy.ops.mesh.delete()
+
+        # this deals with mesh repopulation
         verts, faces = make_polysphere(self)
         base = create_mesh_object(context, verts, [], faces, "PolySphere")
-        context.object.show_wire = True
+        # context.object.show_wire = True
+        bpy.ops.object.mode_set(mode='EDIT')
+        bpy.ops.mesh.remove_doubles(threshold=1.0e-5)
         return {'FINISHED'}
 
 
