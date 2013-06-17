@@ -147,11 +147,16 @@ def draw_callback_px(self, context):
     rv3d = context.space_data.region_3d
 
     spline = context.active_object.data.splines[0]
-    points, cyclic = get_points(spline, clean=True, res=False)
+    resolution = context.scene.NumVerts
+
+    if resolution == spline.resolution_u:
+        resolution = False
+
+    points, cyclic = get_points(spline, clean=True, res=resolution)
     #edge_keys = get_edge_keys(points, cyclic)
     #total_length = get_total_length(points, edge_keys)
 
-    draw_points(context, points, 4.2, (0.2, 0.9, 0.9, .2))    
+    draw_points(context, points, 4.2, (0.2, 0.9, 0.2, .2))    
     
     # restore opengl defaults
     bgl.glLineWidth(1)
