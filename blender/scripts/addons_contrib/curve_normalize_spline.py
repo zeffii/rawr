@@ -32,24 +32,6 @@ bl_info = {
     'category': 'Mesh'}
 
 
-'''
-[ ] take total_resolution = segments ... 
-[ ] segment_length = (tota_length/total_res)
-
-[ ] consume algorithm, for each edge in temporary polyline
-
-    current_position = 0.0
-    current_node = 0
-
-    for point in polyline[1:]:
-        if current_position + polyline
-        if edge < segment_length:
-        if edge longer than segment_length consume
-
-'''
-
-
-
 import math
 
 import bpy
@@ -97,7 +79,48 @@ def get_points(spline, clean=True, res=False):
         return good, cyclic
             
     return master_point_list, cyclic
- 
+
+def normalized_spline(self, context, spline_config):
+    scn = context.scene
+    res = scn.SplineResolution
+
+    edge_keys = spline_config.edge_keys
+    points = spline_config.points 
+    total_length = spline_config.total_length
+
+    seg_length = total_length / (res - 1)
+
+    distance = 0.0
+    counter = 0
+
+    v = lambda i, j: points[edge_keys[i][j]]
+    d = lambda i: (v[i][0] - v[i][1]]).length
+
+    norm_points = []
+    norm_points.append(points[0])
+
+    temp_length = 0
+    while(distance < total_length):
+        
+        if (distance + d[counter]) < (distance + seg_length):
+            temp_length += d[counter]
+            distance += temp_length
+            counter += 1
+            continue
+
+        if (distance + d[counter]) == (distance + seg_length):
+            distance +
+            counter +=
+
+
+
+        counter += 1
+        # temp_length = 0
+
+    return norm_points
+
+
+
 def get_edge_keys(points, cyclic):
     num_points = len(points)
     edges = [[i, i+1] for i in range(num_points-1)]
@@ -158,11 +181,15 @@ def draw_callback_px(self, context):
     edge_keys = get_edge_keys(points, cyclic)
     total_length = get_total_length(points, edge_keys)  # could print to view
 
-    # 
+    # adjust space between points to equidistant
+    spline_config = lambda: None
+    spline_config.points = points
+    spline_config.edge_keys = edge_keys
+    spline_config.total_length = total_length
+
+    points = normalized_spline(self, context, spline_config)
 
     draw_points(context, points, 4.2, (0.2, 0.9, 0.2, .2))    
-    
-    print(scn.SplineResolution)
 
     # restore opengl defaults
     bgl.glLineWidth(1)
