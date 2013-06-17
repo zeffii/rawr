@@ -33,7 +33,6 @@ bl_info = {
 
 
 '''
-[ ] force to be in object mode with curve selected.  
 [ ] take total_resolution = segments ... 
 [ ] segment_length = (tota_length/total_res)
 
@@ -142,22 +141,29 @@ def draw_points(context, points, size, gl_col):
     return
 
 def draw_callback_px(self, context):
-        
+    scn = context.scene
     region = context.region
     rv3d = context.space_data.region_3d
 
     spline = context.active_object.data.splines[0]
-    resolution = context.scene.NumVerts
+    resolution = scn.NumVerts
 
     if resolution == spline.resolution_u:
         resolution = False
 
+    # get the desired resolution of points, these are used to then
+    # evenly space out points for the approximated curve
     points, cyclic = get_points(spline, clean=True, res=resolution)
-    #edge_keys = get_edge_keys(points, cyclic)
-    #total_length = get_total_length(points, edge_keys)
+
+    edge_keys = get_edge_keys(points, cyclic)
+    total_length = get_total_length(points, edge_keys)  # could print to view
+
+    # 
 
     draw_points(context, points, 4.2, (0.2, 0.9, 0.2, .2))    
     
+    print(scn.SplineResolution)
+
     # restore opengl defaults
     bgl.glLineWidth(1)
     bgl.glDisable(bgl.GL_BLEND)
@@ -181,7 +187,7 @@ if False:
     scene.objects.link(profile_object)  
     profile_object.select = True  
 
-
+# should be toggle on/off 
 class OBJECT_OT_draw_fillet(bpy.types.Operator):
     bl_idname = "dynamic.normalize"
     bl_label = "Draw Normalized"
@@ -227,8 +233,8 @@ class UIPanel(bpy.types.Panel):
     scn.NumVerts = bpy.props.IntProperty(min=2, max=64, default=12,
                                             name="number of verts")
 
-    #scn.SplineResolution = bpy.props.IntProperty(min=2, max=64, default=12,
-    #                                        name="number of verts")
+    scn.SplineResolution = bpy.props.IntProperty(min=2, max=128, default=12,
+                                            name="number of verts")
     
     @classmethod
     def poll(self, context):
@@ -245,6 +251,9 @@ class UIPanel(bpy.types.Panel):
 
         row2 = layout.row(align=True)
         row2.operator("dynamic.normalize")
+
+        row3 = layout.row(align=True)
+        row3.prop(scn, "SplineResolution", expand = True)
 
 
 # boilerplate register stuff
