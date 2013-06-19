@@ -85,7 +85,11 @@ def normalized_spline(self, context, spline_config):
     res = scn.SplineResolution
 
     edge_keys = spline_config.edge_keys
-    points = spline_config.points 
+    points = spline_config.points
+    
+    # debug
+    return points
+    
     total_length = spline_config.total_length
 
     seg_length = total_length / (res - 1)
