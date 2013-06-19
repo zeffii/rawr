@@ -89,34 +89,52 @@ def normalized_spline(self, context, spline_config):
     total_length = spline_config.total_length
 
     seg_length = total_length / (res - 1)
-
-    distance = 0.0
-    counter = 0
+    current_seg_length = 0
 
     v = lambda i, j: points[edge_keys[i][j]]
-    d = lambda i: (v[i][0] - v[i][1]]).length
+    d = lambda i: (v(i, 0) - v(i, 1)).length
+    e = lambda i: (v(i, 0), v(i,1))
 
     norm_points = []
     norm_points.append(points[0])
+   
+    length_list = [d(i) for i, _ in enumerate(edge_keys)]
 
-    temp_length = 0
-    while(distance < total_length):
-        
-        if (distance + d[counter]) < (distance + seg_length):
-            temp_length += d[counter]
-            distance += temp_length
-            counter += 1
+    print(length_list)
+
+    '''
+    # i will rewrite this as a recursive function
+    for idx, edge in enumerate(length_list):
+
+        current_plus_edge = current_seg_length + edge
+
+        if current_plus_edge < seg_length:
+            current_seg_length += edge
             continue
 
-        if (distance + d[counter]) == (distance + seg_length):
-            distance +
-            counter +=
+        # rare, but possible
+        if current_plus_edge == seg_length:
+            current_seg_length += edge
+            norm_points.append(points[idx][1])
+            continue
 
+        # more likely
+        if current_plus_edge > seg_length:
+            excess = current_plus_edge - seg_length
 
+            bit_to_add = d[counter] - excess
+            ratio = bit_to_add / d[counter]    
 
-        counter += 1
-        # temp_length = 0
+            p1, p2 = e(idx)
+            point = p1.lerp(p2, ratio)
+            norm_points.append(point)
 
+            remainder = (point-p2).length
+
+            # three more stages
+            #while remainder > seg_length:
+            #    point = 
+    '''
     return norm_points
 
 
@@ -226,6 +244,9 @@ class OBJECT_OT_draw_fillet(bpy.types.Operator):
    
     def modal(self, context, event):
         context.area.tag_redraw()
+
+        if not context.active_object.type == 'CURVE':
+            return {'CANCELLED'}
         return {'PASS_THROUGH'}
     
     def invoke(self, context, event):
