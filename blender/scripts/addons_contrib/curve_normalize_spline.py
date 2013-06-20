@@ -285,7 +285,7 @@ class UIPanel(bpy.types.Panel):
                                             name="number of verts")
 
     scn.SplineResolution = bpy.props.IntProperty(min=2, max=128, default=12,
-                                            name="number of verts")
+                                            name="Spline Resolution")
     
     @classmethod
     def poll(self, context):
