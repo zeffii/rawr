@@ -1,5 +1,5 @@
 '''
-by Dealga McArdle, july 2011.
+by Dealga McArdle, june 2013.
 
 BEGIN GPL LICENSE BLOCK
 
