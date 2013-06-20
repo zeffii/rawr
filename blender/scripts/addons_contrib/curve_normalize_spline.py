@@ -86,14 +86,12 @@ def normalized_spline(self, context, spline_config):
 
     edge_keys = spline_config.edge_keys
     points = spline_config.points
-    
-    # debug
-    return points
-    
+    num_points = len(points)
     total_length = spline_config.total_length
 
-    seg_length = total_length / (res - 1)
-    current_seg_length = 0
+    #return points
+
+    max_len = total_length / (res - 1)
 
     v = lambda i, j: points[edge_keys[i][j]]
     d = lambda i: (v(i, 0) - v(i, 1)).length
@@ -101,44 +99,45 @@ def normalized_spline(self, context, spline_config):
 
     norm_points = []
     norm_points.append(points[0])
-   
-    length_list = [d(i) for i, _ in enumerate(edge_keys)]
 
-    print(length_list)
+    # this is called recursively
+    def consume(p1, p2, cl, idx):
+        if idx > (num_points - 3):
+            norm_points.append(points[-1])
+            return
 
-    '''
-    # i will rewrite this as a recursive function
-    for idx, edge in enumerate(length_list):
+        short = 0
+        if cl < max_len:
+            short = max_len - cl
 
-        current_plus_edge = current_seg_length + edge
+        test_edge = (p1-p2).length
 
-        if current_plus_edge < seg_length:
-            current_seg_length += edge
-            continue
+        if test_edge < short:
+            idx += 1
+            next_point = points[idx]
+            consume(p2, next_point, cl + test_edge, idx)
 
-        # rare, but possible
-        if current_plus_edge == seg_length:
-            current_seg_length += edge
-            norm_points.append(points[idx][1])
-            continue
 
-        # more likely
-        if current_plus_edge > seg_length:
-            excess = current_plus_edge - seg_length
+        if test_edge + cl == max_len:
+            norm_points.append(p2)
+            idx += 1
+            next_point = points[idx]
+            comsume(p2, next_point, 0, idx)
 
-            bit_to_add = d[counter] - excess
-            ratio = bit_to_add / d[counter]    
 
-            p1, p2 = e(idx)
-            point = p1.lerp(p2, ratio)
-            norm_points.append(point)
+        if test_edge + cl > max_len:
+            excess = cl + test_edge - max_len
+            num_times = math.floor(test_edge/max_len)
+            bit_to_add = test_edge - (num_times * max_len) 
+            ratio = bit_to_add / test_edge
+            p1 = p1.lerp(p2, ratio)
+            norm_points.append(p1)
+            consume(p1, p2, 0, idx)
 
-            remainder = (point-p2).length
 
-            # three more stages
-            #while remainder > seg_length:
-            #    point = 
-    '''
+    p1, p2 = e(0)
+    consume(p1, p2, 0, 1)
+
     return norm_points
 
 
