@@ -102,7 +102,7 @@ def normalized_spline(self, context, spline_config):
 
     # this is called recursively
     def consume(p1, p2, cl, idx):
-        if idx >= (num_points - 3):
+        if idx >= (num_points - 2):
             norm_points.append(points[-1])
             return
 
@@ -281,11 +281,13 @@ class UIPanel(bpy.types.Panel):
  
     scn = bpy.types.Scene
     
+    scn.SplineResolution = bpy.props.IntProperty(min=2, max=100, default=30,
+                                            name="Spline Resolution")
+
     scn.NumVerts = bpy.props.IntProperty(min=2, max=64, default=12,
                                             name="number of verts")
 
-    scn.SplineResolution = bpy.props.IntProperty(min=2, max=128, default=12,
-                                            name="Spline Resolution")
+
     
     @classmethod
     def poll(self, context):
@@ -297,14 +299,18 @@ class UIPanel(bpy.types.Panel):
         layout = self.layout
         scn = context.scene
 
+
         row1 = layout.row(align=True)
-        row1.prop(scn, "NumVerts", expand = True)
+        row1.prop(scn, "SplineResolution", expand = True)
 
         row2 = layout.row(align=True)
         row2.operator("dynamic.normalize")
 
         row3 = layout.row(align=True)
-        row3.prop(scn, "SplineResolution", expand = True)
+        row3.prop(scn, "NumVerts", expand = True)
+
+
+
 
 
 # boilerplate register stuff
