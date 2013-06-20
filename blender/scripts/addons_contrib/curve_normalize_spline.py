@@ -102,7 +102,7 @@ def normalized_spline(self, context, spline_config):
 
     # this is called recursively
     def consume(p1, p2, cl, idx):
-        if idx > (num_points - 3):
+        if idx >= (num_points - 3):
             norm_points.append(points[-1])
             return
 
@@ -117,13 +117,11 @@ def normalized_spline(self, context, spline_config):
             next_point = points[idx]
             consume(p2, next_point, cl + test_edge, idx)
 
-
         if test_edge + cl == max_len:
             norm_points.append(p2)
             idx += 1
             next_point = points[idx]
             comsume(p2, next_point, 0, idx)
-
 
         if test_edge + cl > max_len:
             excess = cl + test_edge - max_len
@@ -208,7 +206,9 @@ def draw_callback_px(self, context):
     spline_config.edge_keys = edge_keys
     spline_config.total_length = total_length
 
-    points = normalized_spline(self, context, spline_config)
+    # disable this for now.
+    if scn.SplineResolution < scn.Numverts:
+        points = normalized_spline(self, context, spline_config)
 
     draw_points(context, points, 4.2, (0.2, 0.9, 0.2, .2))    
 
