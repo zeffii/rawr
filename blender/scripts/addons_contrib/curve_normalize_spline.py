@@ -1,5 +1,5 @@
 '''
-by Dealga McArdle, june 2013.
+by Dealga McArdle, july 2011.
 
 BEGIN GPL LICENSE BLOCK
 
@@ -86,7 +86,7 @@ def normalized_spline(self, context, spline_config):
 
     edge_keys = spline_config.edge_keys
     points = spline_config.points
-    num_points = len(points)
+    num_points = len(points)-1
     total_length = spline_config.total_length
 
     #return points
@@ -102,7 +102,8 @@ def normalized_spline(self, context, spline_config):
 
     # this is called recursively
     def consume(p1, p2, cl, idx):
-        if idx >= (num_points - 2):
+        print(idx, '/', num_points)
+        if idx > (num_points - 2):
             norm_points.append(points[-1])
             return
 
@@ -117,24 +118,33 @@ def normalized_spline(self, context, spline_config):
             next_point = points[idx]
             consume(p2, next_point, cl + test_edge, idx)
 
-        if test_edge + cl == max_len:
+        elif test_edge + cl == max_len:
             norm_points.append(p2)
             idx += 1
             next_point = points[idx]
             comsume(p2, next_point, 0, idx)
 
-        if test_edge + cl > max_len:
+        elif test_edge + cl > max_len:
             excess = cl + test_edge - max_len
             num_times = math.floor(test_edge/max_len)
+
             bit_to_add = test_edge - (num_times * max_len) 
             ratio = bit_to_add / test_edge
+
             p1 = p1.lerp(p2, ratio)
             norm_points.append(p1)
             consume(p1, p2, 0, idx)
 
+        elif test_edge + cl < max_len:
+            cl += test_edge
+            idx +=1 
+            next_point = points[idx]
+            consume(p2, next_point, cl, idx)
+
+                
 
     p1, p2 = e(0)
-    consume(p1, p2, 0, 1)
+    consume(p1, p2, 0, 0)
 
     return norm_points
 
@@ -207,7 +217,7 @@ def draw_callback_px(self, context):
     spline_config.total_length = total_length
 
     # disable this for now.
-    if scn.SplineResolution < scn.Numverts:
+    if scn.SplineResolution < scn.NumVerts:
         points = normalized_spline(self, context, spline_config)
 
     draw_points(context, points, 4.2, (0.2, 0.9, 0.2, .2))    
