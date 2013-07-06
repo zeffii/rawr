@@ -1,6 +1,4 @@
 '''
-by Dealga McArdle, july 2011.
-
 BEGIN GPL LICENSE BLOCK
 
 This program is free software; you can redistribute it and/or
@@ -88,13 +86,15 @@ def normalized_spline(self, context, spline_config):
     points = spline_config.points
     num_points = len(points)-1
     total_length = spline_config.total_length
-
-    #return points
-
     max_len = total_length / (res - 1)
 
+    # gets coordinates related to the incoming indices
     v = lambda i, j: points[edge_keys[i][j]]
+
+    # returns the length of an edge segment
     d = lambda i: (v(i, 0) - v(i, 1)).length
+
+    # returns the two coordinates of a given edge segment
     e = lambda i: (v(i, 0), v(i,1))
 
     norm_points = []
@@ -103,26 +103,21 @@ def normalized_spline(self, context, spline_config):
     # this is called recursively
     def consume(p1, p2, cl, idx):
         print(idx, '/', num_points)
-        if idx > (num_points - 2):
+        if idx > (num_points - 1):
             norm_points.append(points[-1])
             return
 
-        short = 0
-        if cl < max_len:
-            short = max_len - cl
-
         test_edge = (p1-p2).length
 
-        if test_edge < short:
-            idx += 1
-            next_point = points[idx]
-            consume(p2, next_point, cl + test_edge, idx)
+        if test_edge + cl < max_len:
+            cl += test_edge
+            next_point = points[idx+1]
+            consume(p2, next_point, cl, idx+1)
 
         elif test_edge + cl == max_len:
             norm_points.append(p2)
-            idx += 1
-            next_point = points[idx]
-            comsume(p2, next_point, 0, idx)
+            next_point = points[idx+1]
+            comsume(p2, next_point, 0, idx+1)
 
         elif test_edge + cl > max_len:
             excess = cl + test_edge - max_len
@@ -135,16 +130,12 @@ def normalized_spline(self, context, spline_config):
             norm_points.append(p1)
             consume(p1, p2, 0, idx)
 
-        elif test_edge + cl < max_len:
-            cl += test_edge
-            idx +=1 
-            next_point = points[idx]
-            consume(p2, next_point, cl, idx)
+
 
                 
 
     p1, p2 = e(0)
-    consume(p1, p2, 0, 0)
+    consume(p1, p2, 0, 1)
 
     return norm_points
 
@@ -198,7 +189,9 @@ def draw_callback_px(self, context):
     rv3d = context.space_data.region_3d
 
     spline = context.active_object.data.splines[0]
-    resolution = scn.NumVerts
+
+    if scn.NumVerts:
+        resolution = scn.NumVerts
 
     if resolution == spline.resolution_u:
         resolution = False
@@ -217,8 +210,8 @@ def draw_callback_px(self, context):
     spline_config.total_length = total_length
 
     # disable this for now.
-    if scn.SplineResolution < scn.NumVerts:
-        points = normalized_spline(self, context, spline_config)
+    #if not resolution:
+    points = normalized_spline(self, context, spline_config)
 
     draw_points(context, points, 4.2, (0.2, 0.9, 0.2, .2))    
 
