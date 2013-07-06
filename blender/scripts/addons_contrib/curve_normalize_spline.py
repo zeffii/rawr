@@ -129,16 +129,12 @@ def normalized_spline(self, context, spline_config):
             p1 = p1.lerp(p2, ratio)
             norm_points.append(p1)
             consume(p1, p2, 0, idx)
-
-
-
                 
 
     p1, p2 = e(0)
     consume(p1, p2, 0, 1)
 
     return norm_points
-
 
 
 def get_edge_keys(points, cyclic):
