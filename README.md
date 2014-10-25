@@ -10,7 +10,7 @@ Will eval the current selection and replace it with the result.
 [text editor chroma key.py](https://github.com/zeffii/rawr/tree/master/blender/scripts/addons_contrib/text_editor_extras): 
 A one click method to enable syntax highlighting and ruler etc.  
 
-*blender/scripts/addons_contrib/io_material_loader/*
+*blender/scripts/addons_contrib/io_material_loader/*  
 [this addon](https://github.com/zeffii/rawr/tree/master/blender/scripts/addons_contrib/io_material_loader): 
 An example of how to link_append from other blender files, to turn them into a library.  
 
