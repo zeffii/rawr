@@ -4,7 +4,7 @@ from mathutils import Vector
 
 bl_info = {
     'name': 'Add Empties',
-    'author': 'Dealga McArdle (zeffii) <digitalaphasia.com>',
+    'author': 'Dealga McArdle (zeffii)',
     'version': (1, 0, 0),
     'blender': (2, 6, 3),
     'location': 'Add > Empties',
