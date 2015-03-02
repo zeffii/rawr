@@ -118,7 +118,7 @@ def make_steps(operator, context):
     ''' At this point we now know (a, b) are high, and (c, d) are low
 
           a --------- b   grow from dc to ab
-         /           /|
+         /           /|   up and over.
         /           / |
        /           /  |
       /           /   |
@@ -171,8 +171,8 @@ def make_steps(operator, context):
         bm.faces.new([__V0, __V1, __V2])
 
         # do quads
-        bm.faces.new([__v0, __v1, __V2, __V0])  # front
-        bm.faces.new([__v1, __v2, __V1, __V2])  # flat
+        bm.faces.new([__V0, __V2, __v1, __v0])  # front
+        bm.faces.new([__V2, __V1, __v2, __v1])  # flat
 
     bm.normal_update()
     bmesh.update_edit_mesh(me, True)
