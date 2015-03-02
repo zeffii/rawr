@@ -22,7 +22,7 @@ bl_info = {
     "version": (0, 1, 0),
     "blender": (2, 7, 3),
     "location": "View3D > Add > Mesh > Steps",
-    "description": "Add a coil/spring",
+    "description": "Add a steps to tilted quad",
     "warning": "",
     "wiki_url": "",
     "tracker_url": "",
