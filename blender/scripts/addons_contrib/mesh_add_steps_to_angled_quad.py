@@ -36,6 +36,13 @@ from mathutils import Vector, Euler, geometry
 import bmesh
 
 
+def force_lookups(bm):
+    if hasattr(bm.verts, "ensure_lookup_table"):
+        bm.verts.ensure_lookup_table()
+        bm.edges.ensure_lookup_table()
+        bm.faces.ensure_lookup_table()
+
+
 def make_steps(operator, context):
     obj = context.edit_object
     me = obj.data
@@ -119,18 +126,55 @@ def make_steps(operator, context):
     d --------- c - - +
 
     '''
-    step_size = (1.0 / operator.num_steps)
+    force_lookups(bm)  # this one might be overkill..
+
+    step_size = 1.0 / operator.num_steps
+    zstep_size = (a.z - d.z) / operator.num_steps
+    z_up = Vector((0, 0, zstep_size))
+
+    left_side = []
+    right_side = []
 
     for i in range(operator.num_steps):
         ratio = i * step_size
-        v1 = bm.verts.new(d.lerp(a, ratio))
-        v2 = bm.verts.new(c.lerp(b, ratio))
-        bm.edges.new([v1, v2])
+        vco1 = d.lerp(a, ratio)
+        vco2 = c.lerp(b, ratio)
+        v1 = bm.verts.new(vco1)
+        v2 = bm.verts.new(vco2)
+        # bm.edges.new([v1, v2])
 
-        if hasattr(bm.verts, "ensure_lookup_table"):
-            bm.verts.ensure_lookup_table()
-            bm.edges.ensure_lookup_table()
+        v1a = bm.verts.new(vco1 + z_up)
+        v2a = bm.verts.new(vco2 + z_up)
+        # bm.edges.new([v1a, v2a])
 
+        left_side.extend([v1, v1a])
+        right_side.extend([v2, v2a])
+
+    va = bm.verts.new(a)
+    vb = bm.verts.new(b)
+    left_side.append(va)
+    right_side.append(vb)
+
+    force_lookups(bm)
+
+    for idx in range(0, len(left_side)-1, 2):
+
+        # do triangles.
+        __v0 = right_side[idx]
+        __v1 = right_side[idx+1]
+        __v2 = right_side[idx+2]
+        bm.faces.new([__v0, __v1, __v2])
+
+        __V0 = left_side[idx]
+        __V1 = left_side[idx+2]
+        __V2 = left_side[idx+1]
+        bm.faces.new([__V0, __V1, __V2])
+
+        # do quads
+        bm.faces.new([__v0, __v1, __V2, __V0])  # front
+        bm.faces.new([__v1, __v2, __V1, __V2])  # flat
+
+    bm.normal_update()
     bmesh.update_edit_mesh(me, True)
 
 
