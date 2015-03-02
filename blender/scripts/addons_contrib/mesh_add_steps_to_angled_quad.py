@@ -1,5 +1,3 @@
-# this is nowhere near done.
-
 # ##### BEGIN GPL LICENSE BLOCK #####
 #
 #  This program is free software; you can redistribute it and/or
@@ -64,6 +62,10 @@ def make_steps(operator, context):
     indices = [v.index for v in face.verts]
     print(indices)
 
+    if hasattr(bm.verts, "ensure_lookup_table"):
+        bm.verts.ensure_lookup_table()
+        bm.edges.ensure_lookup_table()
+
     _v1 = verts[indices[0]].co
     _v2 = verts[indices[1]].co
     _v3 = verts[indices[2]].co
@@ -106,9 +108,28 @@ def make_steps(operator, context):
         print(_v1, _v2, _v3, _v4)
         return
 
-    v1 = bm.verts.new(Vector((0, 0, operator.num_steps)))
-    v2 = bm.verts.new(Vector((0, 1, operator.num_steps)))
-    bm.edges.new([v1, v2])
+    ''' At this point we now know (a, b) are high, and (c, d) are low
+
+          a --------- b   grow from dc to ab
+         /           /|
+        /           / |
+       /           /  |
+      /           /   |
+     /           /    |
+    d --------- c - - +
+
+    '''
+    step_size = (1.0 / operator.num_steps)
+
+    for i in range(operator.num_steps):
+        ratio = i * step_size
+        v1 = bm.verts.new(d.lerp(a, ratio))
+        v2 = bm.verts.new(c.lerp(b, ratio))
+        bm.edges.new([v1, v2])
+
+        if hasattr(bm.verts, "ensure_lookup_table"):
+            bm.verts.ensure_lookup_table()
+            bm.edges.ensure_lookup_table()
 
     bmesh.update_edit_mesh(me, True)
 
