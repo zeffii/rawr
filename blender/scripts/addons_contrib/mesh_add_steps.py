@@ -139,13 +139,11 @@ def make_steps(operator, context):
         ratio = i * step_size
         vco1 = d.lerp(a, ratio)
         vco2 = c.lerp(b, ratio)
+
         v1 = bm.verts.new(vco1)
         v2 = bm.verts.new(vco2)
-        # bm.edges.new([v1, v2])
-
         v1a = bm.verts.new(vco1 + z_up)
         v2a = bm.verts.new(vco2 + z_up)
-        # bm.edges.new([v1a, v2a])
 
         left_side.extend([v1, v1a])
         right_side.extend([v2, v2a])
